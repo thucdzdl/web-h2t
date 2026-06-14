@@ -29,12 +29,12 @@ namespace MusicApp.Backend.Controllers
             var totalUsers = await _context.Users.CountAsync();
             var totalSongs = await _context.Songs.CountAsync(); 
 
-    return Ok(new {
-    totalUsers = totalUsers,        // ✅ camelCase để khớp JS
-    totalSongs = totalSongs,        // ✅ camelCase
-    totalRevenue = 12500000,        // ✅ camelCase
-    todayListeners = 8302           // ✅ camelCase
-});
+            return Ok(new {
+                totalUsers = totalUsers,        // ✅ camelCase để khớp JS
+                totalSongs = totalSongs,        // ✅ camelCase
+                totalRevenue = 12500000,        // ✅ camelCase
+                todayListeners = 8302           // ✅ camelCase
+            });
         }
 
         // ==========================================
@@ -55,36 +55,37 @@ namespace MusicApp.Backend.Controllers
 
             return Ok(users);
         }
-        [Authorize] 
+
         // ==========================================
         // 3. API KHÓA / MỞ KHÓA TÀI KHOẢN (ĐỒNG BỘ MỚI)
         // Đường dẫn: POST api/admin/users/toggle-lock/{id}
         // ==========================================
+        [Authorize]
         [HttpPost("users/toggle-lock/{id}")]
-
         public async Task<IActionResult> ToggleLockUser(int id)
-       {
-    var user = await _context.Users.FindAsync(id);
-    if (user == null) return NotFound(new { message = "Không tìm thấy User!" });
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound(new { message = "Không tìm thấy User!" });
 
-    //  THÊM KIỂM TRA ADMIN DƯỚI ĐÂY
-    if (user.Role == "Banned")
-    {
-        user.Role = "User";
-    }
-    else
-    {
-        user.Role = "Banned";
-    }
-    
-    await _context.SaveChangesAsync();
-    return Ok(new { message = "Cập nhật trạng thái khóa thành công!", currentRole = user.Role });
-}
+            // Logic lật trạng thái: Nếu đang bị Banned thì thả xích về User, ngược lại thì Ban
+            if (user.Role == "Banned")
+            {
+                user.Role = "User"; // Trở lại trạng thái người dùng thường hoạt động
+            }
+            else
+            {
+                user.Role = "Banned"; // Chuyển sang trạng thái khóa
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Cập nhật trạng thái khóa thành công!", currentRole = user.Role });
+        }
 
         // ==========================================
         // 3B. API CẤP / HỦY QUYỀN PREMIUM (BỔ SUNG MỚI)
         // Đường dẫn: POST api/admin/users/toggle-premium/{id}
         // ==========================================
+        [Authorize]
         [HttpPost("users/toggle-premium/{id}")]
         public async Task<IActionResult> TogglePremiumStatus(int id)
         {
