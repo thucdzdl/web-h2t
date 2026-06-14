@@ -1,0 +1,41 @@
+@MusicApp.Backend_HostAddress = http://localhost:5043
+
+### 1. Lấy danh sách bài hát
+GET {{MusicApp.Backend_HostAddress}}/api/songs
+Accept: application/json
+
+
+### 2. Lệnh thêm bài hát mới (Sau khi đã có link nhạc thật)
+POST {{MusicApp.Backend_HostAddress}}/api/songs
+Content-Type: application/json
+
+{
+  "title": "Tôi gặp em vào mùa hạ",
+  "duration": 250,
+  "audioUrl": "/music/91ba5a28-cba7-4355-bbc8-0350945e7c28_nhac-test.mp3",
+  "albumId": null,
+  "genre": "Pop"
+}
+
+### 3. Lệnh Upload File thực tế
+POST {{MusicApp.Backend_HostAddress}}/api/songs/upload
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="nhac-test.mp3"
+Content-Type: audio/mpeg
+
+< "C:\file nhạc\toigapemvaomuaha.mp3"
+--MyBoundary--
+### 4. Đăng ký tài khoản mới (Phần bạn đã có)
+POST {{MusicApp.Backend_HostAddress}}/api/users/register
+Content-Type: application/json
+
+{
+  "username": "thucpham",
+  "password": "123",
+  "email": "thucpham@gmail.com"
+}
+
+### 5. Đăng nhập tài khoản (Dán thêm đoạn này vào)
+    
