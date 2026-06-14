@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác thực Sinh viên - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png?v=1.1">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0b0b;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .verify-card {
+            background: #ffffff;
+            color: #000;
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* PHẦN LOGO MỚI */
+        .logo-box {
+            margin-bottom: 20px;
+        }
+        .logo-box img {
+            width: 80px; /* Điều chỉnh kích thước logo */
+            height: auto;
+            border-radius: 12px;
+        }
+        .brand-name {
+            display: block;
+            font-weight: 800;
+            font-size: 18px;
+            color: #1DB954;
+            margin-top: 8px;
+        }
+
+        h1 { font-weight: 800; font-size: 24px; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 30px; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .upload-area:hover { border-color: #1DB954; background: #f9fff9; }
+
+        .btn-verify {
+            width: 100%;
+            padding: 16px;
+            background: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-verify:hover { background: #1ed760; transform: scale(1.02); }
+        
+        .footer-text { font-size: 11px; color: #999; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="verify-card">
+    <div class="logo-box">
+        <img src="logo.png" alt="H2T Music Logo">
+        <span class="brand-name">H2T Music</span>
+    </div>
+
+    <h1>Xác thực Sinh viên</h1>
+    <p>Giảm ngay 100.000 VNĐ gói Premium dành riêng cho sinh viên. Vui lòng cung cấp thông tin để tiếp tục.</p>
+
+    <form action="/student-verification" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Tên trường đại học/cao đẳng</label>
+            <input type="text" name="university" placeholder="VD: Đại học Bách Khoa" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mã số sinh viên</label>
+            <input type="text" name="student_id" placeholder="VD: 2021601234" required>
+        </div>
+
+        <div class="form-group">
+            <label>Ảnh thẻ sinh viên (Mặt trước và Mặt sau)</label>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #1DB954;"></i>
+                <p id="uploadText" style="margin: 10px 0 0;">Nhấp để tải ảnh lên hoặc kéo thả</p>
+                <input type="file" id="fileInput" name="id_card" style="display: none;" accept="image/*" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-verify">GỬI HỒ SƠ XÁC THỰC</button>
+    </form>
+
+    <div class="footer-text">
+        Bằng cách gửi thông tin, bạn đồng ý để H2T Music xử lý dữ liệu cá nhân cho mục đích xác thực. Kết quả sẽ có sau 24h.
+    </div>
+</div>
+
+<script>
+    // Phần code xử lý kéo thả được thêm vào đây, giữ nguyên logic cũ
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const uploadText = document.getElementById('uploadText');
+
+    // Ngăn chặn hành vi mặc định của trình duyệt khi kéo thả
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Hiệu ứng khi kéo file vào vùng upload
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.style.borderColor = '#1DB954';
+            uploadArea.style.background = '#f9fff9';
+        }, false);
+    });
+
+    // Bỏ hiệu ứng khi kéo file ra khỏi vùng upload
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.background = '#fff';
+        }, false);
+    });
+
+    // Xử lý khi thả file
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            // Gán file đã thả vào thẻ input file
+            fileInput.files = files;
+            handleFiles(files);
+        }
+    }
+
+    // Xử lý khi chọn file bằng cách nhấp chuột (giữ nguyên logic cũ nhưng tối ưu)
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
+
+    // Hàm chung để hiển thị thông báo đã chọn file
+    function handleFiles(files) {
+        if (files.length > 0) {
+            // Cập nhật văn bản hiển thị tên file
+            uploadText.innerText = "Đã chọn file: " + files[0].name;
+            uploadText.style.color = "#1DB954";
+            uploadText.style.fontWeight = "600";
+            
+            // alert("Đã chọn file: " + files[0].name); // Giữ nguyên alert nếu bạn muốn
+        }
+    }
+</script>
+
+</body>
+</html>

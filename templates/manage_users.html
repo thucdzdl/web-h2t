@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Người Dùng - H2T Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #121212; color: white; display: flex; height: 100vh; }
+        .admin-sidebar { width: 250px; background-color: #000000; padding: 20px 0; display: flex; flex-direction: column; }
+        .admin-logo { text-align: center; margin-bottom: 30px; font-size: 24px; font-weight: bold; color: #1db954; }
+        .admin-menu { list-style: none; padding: 0; margin: 0; }
+        .admin-menu li { padding: 15px 25px; border-left: 4px solid transparent; cursor: pointer; transition: 0.3s; }
+        .admin-menu li:hover, .admin-menu li.active { background-color: #282828; border-left: 4px solid #1db954; color: #1db954; }
+        .admin-menu li a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 15px; font-size: 16px; }
+        
+        .admin-content { flex: 1; padding: 30px; background-color: #121212; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        
+        /* Table Styles */
+        .table-container { background: #181818; border-radius: 10px; padding: 20px; }
+        .table-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { color: #b3b3b3; font-weight: normal; border-bottom: 1px solid #333; padding: 12px; }
+        td { padding: 15px 12px; border-bottom: 1px solid #282828; }
+        tr:hover td { background-color: #2a2a2a; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #333; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        
+        /* Status Badges */
+        .status { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status.active { background: rgba(29, 185, 84, 0.2); color: #1db954; }
+        .status.banned { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+        .status.premium { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+
+        /* Action Buttons */
+        .action-btns button { background: transparent; border: none; color: #b3b3b3; cursor: pointer; font-size: 16px; margin-right: 10px; transition: 0.3s; }
+        .action-btns button.btn-ban:hover { color: #e74c3c; }
+        .action-btns button.btn-upgrade:hover { color: #f1c40f; }
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="admin-logo">H2T ADMIN</div>
+        <ul class="admin-menu">
+            <li><a href="admin_dashboard.html"><i class="fas fa-home"></i> Tổng quan</a></li>
+            <li><a href="manage_songs.html"><i class="fas fa-music"></i> Quản lý Bài hát</a></li>
+            <li><a href="manage_users.html"><i class="fas fa-users"></i> Quản lý User</a></li>
+            <li><a href="manage_premium.html"><i class="fas fa-wallet"></i> Quản lý Giao dịch</a></li>
+            <li style="margin-top: auto; border-top: 1px solid #333;"><a href="index.html"><i class="fas fa-sign-out-alt"></i> Về trang Web</a></li>
+        </ul>
+    </div>
+
+    <div class="admin-content">
+        <div class="header">
+            <h1 style="margin: 0; font-size: 28px;">Hồ Sơ Người Dùng</h1>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header-bar">
+                <h3 style="margin: 0;">Danh sách Tài khoản</h3>
+                <div style="background: #282828; padding: 5px 15px; border-radius: 20px; display: flex; align-items: center;">
+                    <i class="fas fa-search" style="color: #b3b3b3; margin-right: 10px;"></i>
+                    <input type="text" placeholder="Tìm kiếm user..." style="background: transparent; border: none; color: white; outline: none;">
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>NGƯỜI DÙNG</th>
+                        <th>EMAIL</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>HÀNH ĐỘNG</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // ==========================================
+        // 1. GỌI API LẤY DANH SÁCH USER VÀ VẼ BẢNG
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", async function() {
+            const tableBody = document.getElementById("user-table-body");
+            if (!tableBody) return;
+
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Đang tải dữ liệu từ máy chủ C#...</td></tr>';
+
+            try {
+                const response = await fetch('http://thucpham111-001-site1.stempurl.com/api/admin/users'); 
+                if (response.ok) {
+                    const users = await response.json();
+                    tableBody.innerHTML = ''; 
+
+                    users.forEach((user, index) => {
+                        const avatarLetter = user.username.charAt(0).toUpperCase();
+                        let statusHtml = '';
+                        let actionHtml = '';
+
+                        // Phân tích trạng thái để gán màu sắc và nút bấm
+                        if (user.role === 'Banned' || user.isLocked) {
+                            // User BỊ KHÓA
+                            statusHtml = '<span class="status banned">Đã khóa</span>';
+                            actionHtml = `
+                                <button class="btn-upgrade" onclick="toggleLockUser(${user.id}, true, '${user.username}')" title="Mở khóa tài khoản" style="color: #1db954;"><i class="fas fa-unlock"></i></button>
+                            `;
+                        } else if (user.isPremium) {
+                            // User VIP
+                            statusHtml = '<span class="status premium"><i class="fas fa-crown"></i> Premium</span>';
+                            actionHtml = `
+                                <button class="btn-upgrade" onclick="togglePremiumStatus(${user.id}, true, '${user.username}')" title="Hủy Premium"><i class="fas fa-arrow-down"></i></button>
+                                <button class="btn-ban" onclick="toggleLockUser(${user.id}, false, '${user.username}')" title="Khóa tài khoản"><i class="fas fa-ban"></i></button>
+                            `;
+                        } else {
+                            // User BÌNH THƯỜNG
+                            statusHtml = '<span class="status active">Hoạt động</span>';
+                            actionHtml = `
+                                <button class="btn-upgrade" onclick="togglePremiumStatus(${user.id}, false, '${user.username}')" title="Cấp Premium"><i class="fas fa-arrow-up"></i></button>
+                                <button class="btn-ban" onclick="toggleLockUser(${user.id}, false, '${user.username}')" title="Khóa tài khoản"><i class="fas fa-ban"></i></button>
+                            `;
+                        }
+
+                        // Vẽ dòng dữ liệu (Row)
+                        const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar" style="background-color: #3498db;">${avatarLetter}</div>
+                                        <div style="font-weight: bold; color: white;">${user.username}</div>
+                                    </div>
+                                </td>
+                                <td style="color: #b3b3b3;">${user.email}</td>
+                                <td>${statusHtml}</td>
+                                <td class="action-btns">${actionHtml}</td>
+                            </tr>
+                        `;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối Backend:", error);
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: #e74c3c;">Lỗi: Không thể kết nối đến Backend C#</td></tr>';
+            }
+        });
+
+        // ==========================================
+        // 2. HÀM XỬ LÝ NÚT KHÓA / MỞ KHÓA TÀI KHOẢN
+        // ==========================================
+        async function toggleLockUser(userId, isCurrentlyLocked, userName) {
+            const actionName = isCurrentlyLocked ? "MỞ KHÓA" : "KHÓA";
+            if (!confirm(`Giám đốc có chắc chắn muốn ${actionName} tài khoản [${userName}] không?`)) return;
+            
+            try {
+                // SẾP CHÚ Ý ĐỔI LINK NÀY NẾU C# CỦA SẾP DÙNG LINK KHÁC
+                // Ví dụ sếp dùng /ban thì đổi thành: /api/admin/users/ban/${userId}
+                const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/admin/users/toggle-lock/${userId}`, { 
+                    method: 'POST' 
+                });
+                
+                if (response.ok) {
+                    alert(`Đã ${actionName} tài khoản thành công!`);
+                    location.reload(); // Ép web tải lại để thấy bảng đổi màu ngay lập tức
+                } else {
+                    alert("Có lỗi xảy ra phía Server C#!");
+                }
+            } catch (err) {
+                alert("Lỗi kết nối mạng khi thực hiện lệnh!");
+            }
+        }
+
+        // ==========================================
+        // 3. HÀM CẤP / HỦY QUYỀN PREMIUM
+        // ==========================================
+        async function togglePremiumStatus(userId, isCurrentlyPremium, userName) {
+            const actionName = isCurrentlyPremium ? "HỦY gói Premium của" : "CẤP gói Premium cho";
+            if (!confirm(`Sếp có chắc chắn muốn ${actionName} [${userName}] không?`)) return;
+
+            try {
+                // GỌI API C# CẤP PREMIUM (Nhớ nhờ anh em Backend C# viết API này nhé)
+                const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/admin/users/toggle-premium/${userId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    alert(`✅ Đã ${actionName} thành công!`);
+                    location.reload(); 
+                } else {
+                    alert("❌ Lỗi hệ thống Backend: Không thể thay đổi quyền Premium.");
+                }
+            } catch (error) {
+                alert("❌ Lỗi kết nối đến máy chủ C#.");
+            }
+        }
+    </script>
+</body>
+</html>

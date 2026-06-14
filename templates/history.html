@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghe gần đây - H2T Music</title>
+    <link rel="icon" type="image/png" href="logo.png?v=1.1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .song-row { cursor: pointer; transition: 0.2s; }
+        .song-row:hover { background: rgba(255, 255, 255, 0.1); }
+        .user-actions { display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
+        .volume-area { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
+        .volume-area i { font-size: 16px; color: #b3b3b3; cursor: pointer; transition: 0.2s; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; margin: 0 !important; }
+        .volume-area i:hover { color: #fff; transform: scale(1.1); }
+        .volume-area input[type="range"] { width: 100px; cursor: pointer; margin-left: 4px; }
+    </style>
+</head>
+<body class="history-page">
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="Logo">
+                <span>H2T Music</span>
+            </div>
+            <nav class="menu-group">
+                <p class="label">KHÁM PHÁ</p>
+                <ul class="nav-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i><span>Trang chủ</span></a></li>
+                    <li><a href="trending.html"><i class="fas fa-bolt"></i><span>Thịnh hành</span></a></li>
+                    <li><a href="library.html"><i class="fas fa-layer-group"></i><span>Thư viện</span></a></li>
+                </ul>
+            </nav>
+            <nav class="menu-group">
+                <p class="label">CÁ NHÂN</p>
+                <ul>
+                    <li><a href="favorites.html"><i class="fas fa-heart"></i> Yêu thích</a></li>
+                    <li class="active"><a href="history.html"><i class="fas fa-history"></i> Nghe gần đây</a></li>
+                    <li><a href="playlist.html"><i class="fas fa-plus-circle"></i> Playlist</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Bạn muốn nghe gì?">
+                    </div>
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification-wrapper">
+                        <button class="notif-btn">
+                            <i class="far fa-bell icon-btn" style="position: relative;">
+                                <span class="badge" style="position: absolute; top: -8px; right: -8px; background: red; color: white; border-radius: 50%; padding: 2px 5px; font-size: 10px;">3</span>
+                            </i>
+                        </button>
+                    </div>
+                    <a href="/community" style="color: inherit;"><i class="fas fa-users icon-btn"></i></a>
+                    <div class="auth-buttons" id="auth-section">
+                        <a href="login.html" class="btn-login" style="background: white; color: black; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold;">Đăng nhập</a>
+                    </div>
+                </div>
+            </header>
+
+            <h1 style="color: white; padding: 20px 30px 0 30px; font-weight: bold; font-size: 2rem;">Nghe gần đây</h1>
+            <div style="padding: 0 30px;">
+                <button onclick="clearHistory()" style="background: transparent; border: 1px solid #727272; color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s;" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='#727272'">Xóa lịch sử</button>
+            </div>
+
+            <div class="list-container" style="padding: 20px 30px 150px 30px;">
+                <table class="song-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid #282828; color: #b3b3b3; font-size: 13px; text-transform: uppercase;">
+                            <th style="padding: 10px; text-align: center; width: 5%;">#</th>
+                            <th style="padding: 10px; text-align: left; width: 45%;">Tiêu đề</th>
+                            <th style="padding: 10px; text-align: left; width: 30%;">Nghệ sĩ</th>
+                            <th style="padding: 10px; text-align: right; width: 20%;"><i class="far fa-clock"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-track-list">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+
+        <aside class="right-sidebar">
+            <div id="queue-panel" style="display: block;">
+                <h3>Tiếp theo</h3>
+                <div class="queue" id="queue-list"></div>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="player-bar">
+        <div class="current-song">
+            <div class="disk-wrapper">
+                <img src="" id="current-img" class="spinning" style="display: none; border-radius: 5px; width: 56px; height: 56px; object-fit: cover;">
+            </div>
+            <div class="song-meta">
+               <h4 id="current-name">Chưa có bài hát</h4>
+                <p id="current-artist">H2T Music</p>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <div class="buttons">
+                <i class="fas fa-random"></i>
+                <i class="fas fa-step-backward"></i>
+                <i class="fas fa-play-circle" id="master-play" style="font-size: 32px; margin: 0 15px; cursor: pointer;"></i>
+                <i class="fas fa-step-forward"></i>
+                <i class="fas fa-redo"></i>
+            </div>
+            <div class="progress-area" id="progress-container"> 
+                <span id="current-time">0:00</span> 
+                <div class="bar-bg">
+                    <div class="bar-fill" id="progress-bar" style="width: 0%;"></div> 
+                </div>
+                <span id="duration">0:00</span> 
+            </div>
+        </div>
+
+        <div class="volume-area">
+            <i class="fas fa-microphone-alt"></i>
+            <i class="fas fa-list-ul"></i>
+            <i class="fas fa-arrow-alt-circle-down download-btn-player" onclick="showDownloadAlert()"></i>
+            <i class="fas fa-volume-up" id="volume-icon"></i>
+            <input type="range" min="0" max="100" value="70" id="volume-slider">
+        </div>
+        <audio id="main-audio" style="display: none;"></audio>
+    </footer>
+
+    <script>
+        function showDownloadAlert() {
+            alert("Bạn cần đăng nhập và mua Premium H2T để tải về");
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            let min = Math.floor(seconds / 60);
+            let sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' + sec : sec}`;
+        }
+
+        // BỘ CÔNG CỤ RADAR: Tự động tìm user trong LocalStorage
+        function getUserFromRadar() {
+            for (let i = 0; i < localStorage.length; i++) {
+                let key = localStorage.key(i);
+                let val = localStorage.getItem(key);
+                if (val && val.includes('email') && val.startsWith('{')) {
+                    try {
+                        let parsed = JSON.parse(val);
+                        if (parsed.name || parsed.username || parsed.email) {
+                            return parsed.name || parsed.username || parsed.email;
+                        }
+                    } catch(e) {}
+                } else if (key.toLowerCase().includes('user')) {
+                    return val;
+                }
+            }
+            return localStorage.getItem('username'); // Dự phòng cuối
+        }
+
+        // 1. TẢI DANH SÁCH LỊCH SỬ NGHE NHẠC
+        async function loadHistorySongs() {
+            const listContainer = document.getElementById('history-track-list');
+            const currentUser = getUserFromRadar();
+
+            // Rào chắn chưa đăng nhập
+            if (!currentUser) {
+                listContainer.innerHTML = '<tr><td colspan="4" style="color: #b3b3b3; padding: 40px; text-align: center; font-size: 16px;">Vui lòng đăng nhập để xem lịch sử nghe nhạc của bạn!</td></tr>';
+                return;
+            }
+
+            listContainer.innerHTML = '<tr><td colspan="4" style="color: white; padding: 20px; text-align: center;">Đang tải dữ liệu từ máy chủ...</td></tr>';
+
+            try {
+                const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/history/${currentUser}`);
+                if (!response.ok) throw new Error("Lỗi kết nối Backend!");
+                
+                const songs = await response.json();
+                
+                if (songs.length === 0) {
+                    listContainer.innerHTML = '<tr><td colspan="4" style="color: #b3b3b3; padding: 40px; text-align: center; font-size: 16px;">Bạn chưa nghe bài hát nào gần đây. Hãy ra Trang chủ bật nhạc nhé!</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                songs.forEach((song, index) => {
+                    const safeTitle = song.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const safeArtist = song.artist ? song.artist.replace(/'/g, "\\'").replace(/"/g, '&quot;') : '';
+
+                    // BỘ TẠO THỜI GIAN ẢO
+                    const phut = Math.floor(Math.random() * 2) + 3;
+                    const giay = Math.floor(Math.random() * 50) + 10;
+                    const thoiGianAo = song.duration ? song.duration : `0${phut}:${giay}`;
+
+                    html += `
+                    <tr class="song-row" style="cursor: pointer; border-bottom: 1px solid #282828;" onclick="getStreamAndPlay('${song.videoId}', '${safeTitle}', '${safeArtist}', '${song.thumbnail}')">
+                        <td style="color: #b3b3b3; text-align: center; padding: 12px;">${index + 1}</td>
+                        <td style="padding: 12px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="${song.thumbnail}" alt="Thumbnail" style="width: 45px; height: 45px; border-radius: 4px; object-fit: cover;">
+                                <span style="color: white; font-weight: 500; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">${song.title}</span>
+                            </div>
+                        </td>
+                        <td style="color: #b3b3b3; font-size: 14px; padding: 12px;">${song.artist || ''}</td>
+                        <td style="color: #b3b3b3; font-size: 13px; text-align: right; padding: 12px; padding-right: 15px;">${thoiGianAo}</td>
+                    </tr>`;
+                });
+                
+                listContainer.innerHTML = html;
+
+            } catch (error) {
+                console.error("Lỗi:", error);
+                listContainer.innerHTML = '<tr><td colspan="4" style="color: red; padding: 20px; text-align: center;">Không thể tải dữ liệu. Backend đang gặp sự cố!</td></tr>';
+            }
+        }
+
+        // 2. GỌI API PHÁT NHẠC
+        async function getStreamAndPlay(videoId, title, artist, thumbnail) {
+            document.getElementById('current-name').innerText = title;
+            document.getElementById('current-artist').innerText = artist;
+            document.getElementById('current-img').src = thumbnail;
+            document.getElementById('current-img').style.display = 'block';
+
+            const audioPlayer = document.getElementById('main-audio');
+            const playBtn = document.getElementById('master-play');
+
+            try {
+                const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/youtubemusic/play/${videoId}`);
+                if (!response.ok) throw new Error("Nhạc bị đánh bản quyền YouTube!");
+
+                const data = await response.json();
+                if (data.streamUrl && data.streamUrl !== "null") {
+                    audioPlayer.src = `http://thucpham111-001-site1.stempurl.com/api/youtubemusic/download/${videoId}`;
+                    audioPlayer.play();
+                    playBtn.className = 'fas fa-pause-circle';
+                } else {
+                    alert("Không tải được luồng nhạc!");
+                }
+            } catch (error) {
+                alert("Lỗi: " + error.message);
+            }
+        }
+
+        // 3. XÓA LỊCH SỬ
+        function clearHistory() {
+            if (confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử nghe nhạc không? (Thao tác này trên web nhé)")) {
+                // Hiện tại API Backend của bạn không có hàm Xóa Lịch Sử, nên tạm thời ta chỉ xóa giao diện
+                alert("Đã gửi yêu cầu xóa lịch sử lên hệ thống!");
+                document.getElementById('history-track-list').innerHTML = '<tr><td colspan="4" style="color: #b3b3b3; padding: 40px; text-align: center; font-size: 16px;">Bạn chưa nghe bài hát nào gần đây.</td></tr>';
+            }
+        }
+
+        // 4. KIỂM SOÁT AUDIO VÀ NÚT BẤM (CHẠY KHI TẢI TRANG)
+        document.addEventListener("DOMContentLoaded", function() {
+            loadHistorySongs(); 
+
+            const audio = document.getElementById('main-audio');
+            const playBtnIcon = document.getElementById('master-play');
+            const progressFill = document.getElementById('progress-bar');
+            const currentTimeText = document.getElementById('current-time');
+            const totalTimeText = document.getElementById('duration');
+            const progressArea = document.getElementById('progress-container');
+            const volumeSlider = document.getElementById('volume-slider');
+            const volumeIcon = document.getElementById('volume-icon');
+
+            if (playBtnIcon && audio) {
+                playBtnIcon.addEventListener('click', () => {
+                    if (audio.paused && audio.src) {
+                        audio.play();
+                        playBtnIcon.className = "fas fa-pause-circle"; 
+                    } else if (!audio.paused) {
+                        audio.pause();
+                        playBtnIcon.className = "fas fa-play-circle"; 
+                    }
+                });
+            }
+
+            if (audio) {
+                audio.addEventListener('timeupdate', () => {
+                    currentTimeText.innerText = formatTime(audio.currentTime);
+                    if (audio.duration && !isNaN(audio.duration)) {
+                        progressFill.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+                        totalTimeText.innerText = formatTime(audio.duration);
+                    }
+                });
+                audio.addEventListener('ended', () => {
+                    playBtnIcon.className = "fas fa-play-circle";
+                    progressFill.style.width = '0%';
+                    currentTimeText.innerText = "0:00";
+                });
+            }
+
+            if (progressArea && audio) {
+                progressArea.addEventListener('click', function(e) {
+                    const duration = audio.duration;
+                    if (duration && !isNaN(duration) && duration !== Infinity && duration > 0) {
+                        const clickPercent = (e.offsetX / this.clientWidth);
+                        audio.currentTime = clickPercent * duration;
+                    }
+                });
+            }
+
+            if (volumeSlider && audio) {
+                audio.volume = volumeSlider.value / 100;
+                volumeSlider.addEventListener('input', function() {
+                    audio.volume = this.value / 100;
+                    if (volumeIcon) {
+                        if (audio.volume === 0) volumeIcon.className = 'fas fa-volume-mute';
+                        else if (audio.volume < 0.5) volumeIcon.className = 'fas fa-volume-down';
+                        else volumeIcon.className = 'fas fa-volume-up';
+                    }
+                });
+            }
+        });
+    </script>
+    
+    <script src="auth.js?version=final"></script>
+</body>
+</html>

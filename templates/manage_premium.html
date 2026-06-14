@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Giao Dịch - H2T Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #121212; color: white; display: flex; height: 100vh; }
+        .admin-sidebar { width: 250px; background-color: #000000; padding: 20px 0; display: flex; flex-direction: column; }
+        .admin-logo { text-align: center; margin-bottom: 30px; font-size: 24px; font-weight: bold; color: #1db954; }
+        .admin-menu { list-style: none; padding: 0; margin: 0; }
+        .admin-menu li { padding: 15px 25px; border-left: 4px solid transparent; cursor: pointer; transition: 0.3s; }
+        .admin-menu li:hover, .admin-menu li.active { background-color: #282828; border-left: 4px solid #1db954; color: #1db954; }
+        .admin-menu li a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 15px; font-size: 16px; }
+        
+        .admin-content { flex: 1; padding: 30px; background-color: #121212; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        
+        /* Mini Stats cho Doanh Thu */
+        .revenue-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .rev-card { background: linear-gradient(145deg, #181818, #222); padding: 20px; border-radius: 10px; border: 1px solid #282828; display: flex; align-items: center; justify-content: space-between; }
+        .rev-info h3 { margin: 0; font-size: 13px; color: #b3b3b3; text-transform: uppercase; }
+        .rev-info p { margin: 10px 0 0 0; font-size: 26px; font-weight: bold; color: white; }
+        .rev-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        
+        /* Table Styles */
+        .table-container { background: #181818; border-radius: 10px; padding: 20px; }
+        .table-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { color: #b3b3b3; font-weight: normal; border-bottom: 1px solid #333; padding: 12px; font-size: 14px; }
+        td { padding: 15px 12px; border-bottom: 1px solid #282828; font-size: 15px; }
+        tr:hover td { background-color: #2a2a2a; }
+        
+        /* Status Badges */
+        .status { padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .status.success { background: rgba(29, 185, 84, 0.15); color: #1db954; border: 1px solid rgba(29, 185, 84, 0.3); }
+        .status.pending { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+        .status.failed { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+
+        .price-text { color: #1db954; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="admin-logo">H2T ADMIN</div>
+        <ul class="admin-menu">
+            <li><a href="admin_dashboard.html"><i class="fas fa-home"></i> Tổng quan</a></li>
+            <li><a href="manage_songs.html"><i class="fas fa-music"></i> Quản lý Bài hát</a></li>
+            <li><a href="manage_users.html"><i class="fas fa-users"></i> Quản lý User</a></li>
+            <li class="active"><a href="manage_premium.html"><i class="fas fa-wallet"></i> Quản lý Giao dịch</a></li>
+            <li style="margin-top: auto; border-top: 1px solid #333;"><a href="index.html"><i class="fas fa-sign-out-alt"></i> Về trang Web</a></li>
+        </ul>
+    </div>
+
+    <div class="admin-content">
+        <div class="header">
+            <h1 style="margin: 0; font-size: 28px;">Quản Lý Doanh Thu & Giao Dịch</h1>
+        </div>
+
+        <div class="revenue-stats">
+            <div class="rev-card">
+                <div class="rev-info"><h3>Doanh thu tháng này</h3><p>8,500,000 ₫</p></div>
+                <div class="rev-icon" style="background: rgba(29, 185, 84, 0.2); color: #1db954;"><i class="fas fa-chart-line"></i></div>
+            </div>
+            <div class="rev-card">
+                <div class="rev-info"><h3>Giao dịch chờ xử lý</h3><p>12</p></div>
+                <div class="rev-icon" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;"><i class="fas fa-hourglass-half"></i></div>
+            </div>
+            <div class="rev-card">
+                <div class="rev-info"><h3>Tổng User Premium</h3><p>342</p></div>
+                <div class="rev-icon" style="background: rgba(155, 89, 182, 0.2); color: #9b59b6;"><i class="fas fa-crown"></i></div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header-bar">
+                <h3 style="margin: 0;">Lịch sử Giao dịch gần đây</h3>
+                <button style="background: #282828; color: white; border: 1px solid #333; padding: 8px 15px; border-radius: 5px; cursor: pointer;"><i class="fas fa-file-export"></i> Xuất Báo Cáo</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>MÃ GD</th>
+                        <th>NGƯỜI MUA</th>
+                        <th>GÓI ĐĂNG KÝ</th>
+                        <th>SỐ TIỀN</th>
+                        <th>THỜI GIAN</th>
+                        <th>TRẠNG THÁI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: #b3b3b3;">#H2T-89231</td>
+                        <td style="font-weight: bold;">thucdzai</td>
+                        <td>Gói Sinh Viên (1 Tháng)</td>
+                        <td class="price-text">+ 29,000 ₫</td>
+                        <td style="color: #b3b3b3;">Vừa xong</td>
+                        <td><span class="status success">Thành công</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color: #b3b3b3;">#H2T-89230</td>
+                        <td style="font-weight: bold;">hieu_nguyen</td>
+                        <td>Gói Tiêu Chuẩn (1 Năm)</td>
+                        <td class="price-text">+ 590,000 ₫</td>
+                        <td style="color: #b3b3b3;">2 giờ trước</td>
+                        <td><span class="status success">Thành công</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color: #b3b3b3;">#H2T-89229</td>
+                        <td style="font-weight: bold;">nam_coder</td>
+                        <td>Gói Gia Đình (1 Tháng)</td>
+                        <td class="price-text">+ 109,000 ₫</td>
+                        <td style="color: #b3b3b3;">5 giờ trước</td>
+                        <td><span class="status pending">Đang chờ Momo...</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color: #b3b3b3;">#H2T-89228</td>
+                        <td style="font-weight: bold;">guest_7749</td>
+                        <td>Gói Tiêu Chuẩn (1 Tháng)</td>
+                        <td style="color: #e74c3c; font-weight: bold;">0 ₫</td>
+                        <td style="color: #b3b3b3;">Hôm qua</td>
+                        <td><span class="status failed">Hủy giao dịch</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

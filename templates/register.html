@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký - H2T Music</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-logo">
+            <img src="logo.png" alt="Logo">
+            <h1>H2T Music</h1>
+        </div>
+        <form class="auth-form" id="registerForm">
+            <h2>Đăng ký tài khoản</h2>
+            <div class="input-group">
+                <label>Tên người dùng</label>
+                <input type="text" id="reg-name" placeholder="Nhập tên đăng nhập (VD: thuc)" required>
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="reg-email" placeholder="Nhập email của bạn" required>
+            </div>
+            <div class="input-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="reg-password" placeholder="Nhập mật khẩu" required>
+            </div>
+            <button type="submit" class="btn-auth">Đăng ký</button>
+        </form>
+        <div class="auth-footer">
+            <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const requestData = {
+                Username: document.getElementById('reg-name').value,
+                Email: document.getElementById('reg-email').value,
+                Password: document.getElementById('reg-password').value
+            };
+            fetch('http://thucpham111-001-site1.stempurl.com/api/users/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (response.ok) {
+                    alert("🎉 " + data.message);
+                    window.location.href = 'login.html';
+                } else {
+                    alert("⚠️ Lỗi: " + data.message);
+                }
+            })
+            .catch(err => alert('Không kết nối được Server Backend!'));
+        });
+    </script>
+    
+</body>
+</html>

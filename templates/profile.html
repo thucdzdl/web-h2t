@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }} - H2T Music</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="Logo">
+                <span>H2T Music</span>
+            </div>
+            <nav class="menu-group">
+                <ul class="nav-list">
+                    <li><a href="/"><i class="fas fa-home"></i><span>Trang chủ</span></a></li>
+                    <li><a href="trending.html"><i class="fas fa-bolt"></i><span>Thịnh hành</span></a></li>
+                    <li><a href="library.html"><i class="fas fa-layer-group"></i><span>Thư viện</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content no-padding">
+            
+
+            <section class="profile-hero">
+                <div class="profile-avatar-large">
+                    <img src="{{ user.avatar }}" alt="Avatar">
+                </div>
+                <div class="profile-info-header">
+                    <span class="verified"><i class="fas fa-check-circle"></i> Hồ sơ cá nhân</span>
+                    <h1 class="profile-name">{{ user.name }}</h1>
+                    <div class="profile-stats">
+                        <span><strong>{{ user.public_playlists }}</strong> Playlist công khai</span> • 
+                        <span><strong>{{ user.followers }}</strong> Người theo dõi</span> • 
+                        <span><strong>{{ user.following }}</strong> Đang theo dõi</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="profile-body-content">
+                <div class="action-bar">
+                    <button class="btn-play-all"><i class="fas fa-play"></i></button>
+                    <button class="btn-outline">Chỉnh sửa hồ sơ</button>
+                    <i class="fas fa-ellipsis-h more-icon"></i>
+                </div>
+
+                <div class="top-songs-section">
+                    <h2>Bài hát yêu thích tháng này</h2>
+                    <table class="song-table">
+                        <tbody>
+                            {% for song in songs[:4] %}
+                            <tr class="song-row">
+                                <td class="col-id">{{ loop.index }}</td>
+                                <td class="col-title">
+                                    <div class="song-detail">
+                                        <img src="{{ song.img }}" alt="">
+                                        <span class="name">{{ song.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="col-artist">{{ song.title }}</td>
+                                <td class="col-time">3:45</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="apple-footer-container">
+            <div class="apple-footer-row top">
+                <div class="apple-copyright">
+                    Copyright © 2026 <strong>H2T Music Inc.</strong> All rights reserved.
+                </div>
+                <div class="apple-languages">
+                    <a href="#" class="lang-active">Tiếng Việt</a>
+                    <span class="divider">|</span>
+                    <a href="#">Español (México)</a>
+                    <span class="divider">|</span>
+                    <a href="#">العربية</a>
+                    <span class="divider">|</span>
+                    <a href="#">Русский</a>
+                    <span class="divider">|</span>
+                    <a href="#">简体中文</a>
+                    <span class="divider">|</span>
+                    <a href="#">Français (France)</a>
+                    <span class="divider">|</span>
+                    <a href="#">한국어</a>
+                    <span class="divider">|</span>
+                    <a href="#">Português (Brazil)</a>
+                    <span class="divider">|</span>
+                    <a href="#">United States</a>
+                    <span class="divider">|</span>
+                    <a href="#">繁體中文 (台灣)</a>
+                </div>
+            </div>
+            
+            <div class="apple-footer-row bottom">
+                <div class="apple-legal-links">
+                    <a href="#">Internet Service Terms</a>
+                    <span class="divider">|</span>
+                    <a href="#">H2T Music & Privacy</a>
+                    <span class="divider">|</span>
+                    <a href="#">Cookie Warning</a>
+                    <span class="divider">|</span>
+                    <a href="#">Support</a>
+                    <span class="divider">|</span>
+                    <a href="#">Feedback</a>
+                </div>
+            </div>
+        </footer>
+        </main>
+    </div>
+</body>
+</html>

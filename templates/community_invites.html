@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lời mời nghe chung - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b0b0b; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+            background-image: radial-gradient(circle at top right, #1a1a1a, #000);
+        }
+        .invite-card {
+            background: #181818; width: 100%; max-width: 400px; border-radius: 20px;
+            padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 1px solid #282828;
+        }
+        h2 { margin-top: 0; font-size: 22px; text-align: center; color: #1db954; }
+        
+        .invite-item {
+            display: flex; align-items: center; gap: 15px; background: #282828;
+            padding: 15px; border-radius: 12px; margin-bottom: 15px; transition: 0.2s;
+        }
+        .invite-item:hover { background: #333; transform: translateY(-2px); }
+        .invite-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        
+        .info { flex: 1; }
+        .info strong { display: block; font-size: 15px; margin-bottom: 3px; }
+        .info span { font-size: 12px; color: #b3b3b3; }
+        
+        .actions { display: flex; gap: 10px; }
+        .btn {
+            border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer;
+            font-weight: bold; font-size: 13px; transition: 0.2s;
+        }
+        .btn-join { background: #1db954; color: black; }
+        .btn-join:hover { background: #1ed760; transform: scale(1.05); }
+        
+        .back-link {
+            display: block; text-align: center; margin-top: 25px; color: #888;
+            text-decoration: none; font-size: 14px; transition: 0.2s;
+        }
+        .back-link:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<div class="invite-card">
+    <h2><i class="fas fa-envelope-open-text"></i> Lời mời nghe chung</h2>
+    <p style="text-align: center; color: #888; font-size: 13px; margin-bottom: 25px;">Bạn có 3 lời mời chưa đọc</p>
+    
+    <div class="invite-item">
+        <img src="https://i.pravatar.cc/150?u=jack" alt="">
+        <div class="info">
+            <strong>Nhóm của Jack</strong>
+            <span>Đang nghe: Sơn Tùng M-TP</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-join" onclick="joinRoom('fake')">Tham gia</button>
+        </div>
+    </div>
+
+    <div class="invite-item">
+        <img src="https://i.pravatar.cc/150?u=rose" alt="">
+        <div class="info">
+            <strong>Rosé's Party</strong>
+            <span>Đang nghe: APT.</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-join" onclick="joinRoom('fake')">Tham gia</button>
+        </div>
+    </div>
+
+    <div class="invite-item" style="border: 1px solid #1db954;">
+        <img src="https://i.pinimg.com/originals/c6/3f/11/c63f1146eb41a547781b212f7169df30.gif" alt="">
+        <div class="info">
+            <strong>Học bài cùng Long</strong>
+            <span>Đang nghe: Lofi Pomodoro</span>
+        </div>
+        <div class="actions">
+            <button class="btn btn-join" onclick="joinRoom('real')">Tham gia</button>
+        </div>
+    </div>
+
+    <a href="community.html" class="back-link"><i class="fas fa-arrow-left"></i> Quay lại Cộng đồng</a>
+</div>
+
+<script>
+    function joinRoom(type) {
+        if (type === 'real') {
+            // Chuyển hướng sang phòng Radio Lofi
+            window.location.href = 'community_radio.html';
+        } else {
+            // Báo lỗi cho các phòng ảo
+            alert("Rất tiếc! Phòng nghe nhạc này hiện đang đầy hoặc đã chuyển sang chế độ Riêng tư.");
+        }
+    }
+</script>
+
+</body>
+</html>

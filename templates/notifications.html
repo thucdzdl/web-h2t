@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo - H2T Music</title>
+    <!-- Liên kết CSS tổng của dự án -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome cho các Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS nội bộ bổ sung cho trang thông báo */
+        .notifications-wrapper {
+            padding: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .notif-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .notif-page-header h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+        }
+        .notif-filters {
+            display: flex;
+            gap: 10px;
+        }
+        .filter-btn {
+            background: #282828;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active {
+            background: #ffffff;
+            color: #000000;
+        }
+        .notif-list-full {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .notif-card {
+            background: #181818;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: 0.3s;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .notif-card:hover {
+            background: #282828;
+        }
+        .notif-card.unread {
+            background: #232323;
+            border-left: 4px solid #1DB954;
+        }
+        .notif-card-img {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .notif-card-img img {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .notif-card-content {
+            flex: 1;
+        }
+        .notif-card-content p {
+            color: white;
+            margin: 0 0 5px 0;
+            line-height: 1.5;
+        }
+        .notif-card-time {
+            color: #b3b3b3;
+            font-size: 13px;
+        }
+        .unread-indicator {
+            width: 10px;
+            height: 10px;
+            background: #1DB954;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .btn-play-action {
+            background: #1DB954;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>H2T Music</span>
+        </div>
+        <nav class="menu-group">
+            <p class="label">KHÁM PHÁ</p>
+            <ul class="nav-list">
+    <li class="{{ 'active' if request.path == '/' else '' }}"><a href="/"><i class="fas fa-home"></i><span>Trang chủ</span></a></li>
+    <li class="{{ 'active' if request.path == '/trending' else '' }}">
+        <a href="trending.html">
+            <i class="fas fa-bolt"></i>
+            <span>Thịnh hành</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="library.html">
+            <i class="fas fa-layer-group"></i>
+            <span>Thư viện</span>
+        </a>
+    </li>
+</ul>
+        </nav>
+        <nav class="menu-group">
+            <p class="label">CÁ NHÂN</p>
+            <ul>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Yêu thích</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> Nghe gần đây</a></li>
+                <li><a href="playlist.html"><i class="fas fa-plus-circle"></i> Playlist</a></li>
+                <li><a href="/downloads"><i class="fas fa-arrow-alt-circle-down"></i><span> Tải xuống</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <div class="search-bar">
+                <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Bạn muốn nghe gì?">
+                </div>
+                    </div>
+                <div class="user-actions">
+                    <div class="notification-wrapper">
+    <!-- Nút chuông -->
+    <button class="notif-btn" onclick="toggleNotif()">
+        <i class="far fa-bell icon-btn"></i>
+        <span class="badge">3</span>
+    </button>
+
+    <!-- Ô thông báo nhỏ (ẩn mặc định) -->
+    <div id="notifDropdown" class="notif-dropdown">
+        <div class="notif-header">
+            <h3>Thông báo</h3>
+        </div>
+        <div class="notif-content">
+            <div class="notif-item">
+                <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                <p><strong>Sơn Tùng M-TP</strong> vừa ra mắt bài hát mới.</p>
+            </div>
+            <div class="notif-item">
+                <img src="https://i.scdn.co/image/ab67706f000000025ea54a923397d3eac646067b" alt="">
+                <p>Playlist <strong>Chill cuối tuần</strong> đã được cập nhật.</p>
+            </div>
+            <div class="notif-item">
+                <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                <p><strong>Hieu Rapper</strong> vừa ra mắt bài hát mới.</p>
+            </div>
+        </div>
+            <div class="notif-footer">
+                <a href="/notifications">Xem tất cả</a>
+            </div>
+        </div>
+    </div>
+                    <a href="/community"><i class="fas fa-users icon-btn"></i></a>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn-login">Đăng nhập</a>
+                    </div>
+                </div>
+            </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button onclick="history.back()" class="circle-btn"><i class="fas fa-chevron-left"></i></button>
+            </header>
+
+            <div class="notifications-wrapper">
+                <div class="notif-page-header">
+                    <h1>Thông báo</h1>
+                    <div class="notif-filters">
+                        <button class="filter-btn active" id="btn-all" onclick="filterNotif('all')">Tất cả</button>
+                        <button class="filter-btn" id="btn-unread" onclick="filterNotif('unread')">Chưa đọc</button>
+                    </div>
+                </div>
+
+                <div class="notif-list-full">
+                    <!-- Thông báo 1 (Chưa đọc) -->
+                    <div class="notif-card unread">
+                        <div class="notif-card-img">
+                            <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                        </div>
+                        <div class="notif-card-content">
+                            <p><strong>Sơn Tùng M-TP</strong> vừa ra mắt bài hát mới: <em>Đừng Làm Trái Tim Anh Đau</em></p>
+                            <span class="notif-card-time">5 phút trước</span>
+                        </div>
+                        <button class="btn-play-action">Nghe ngay</button>
+                        <div class="unread-indicator"></div>
+                    </div>
+
+                    <!-- Thông báo 2 (Đã đọc) -->
+                    <div class="notif-card">
+                        <div class="notif-card-img">
+                            <img src="https://i.scdn.co/image/ab67706f000000025ea54a923397d3eac646067b" alt="">
+                        </div>
+                        <div class="notif-card-content">
+                            <p>Playlist <strong>Chill cuối tuần</strong> của bạn đã được cập nhật thêm bài hát mới.</p>
+                            <span class="notif-card-time">2 giờ trước</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="apple-footer-container">
+            <div class="apple-footer-row top">
+                <div class="apple-copyright">
+                    Copyright © 2026 <strong>H2T Music Inc.</strong> All rights reserved.
+                </div>
+                <div class="apple-languages">
+                    <a href="#" class="lang-active">Tiếng Việt</a>
+                    <span class="divider">|</span>
+                    <a href="#">Español (México)</a>
+                    <span class="divider">|</span>
+                    <a href="#">العربية</a>
+                    <span class="divider">|</span>
+                    <a href="#">Русский</a>
+                    <span class="divider">|</span>
+                    <a href="#">简体中文</a>
+                    <span class="divider">|</span>
+                    <a href="#">Français (France)</a>
+                    <span class="divider">|</span>
+                    <a href="#">한국어</a>
+                    <span class="divider">|</span>
+                    <a href="#">Português (Brazil)</a>
+                    <span class="divider">|</span>
+                    <a href="#">United States</a>
+                    <span class="divider">|</span>
+                    <a href="#">繁體中文 (台灣)</a>
+                </div>
+            </div>
+            
+            <div class="apple-footer-row bottom">
+                <div class="apple-legal-links">
+                    <a href="#">Internet Service Terms</a>
+                    <span class="divider">|</span>
+                    <a href="#">H2T Music & Privacy</a>
+                    <span class="divider">|</span>
+                    <a href="#">Cookie Warning</a>
+                    <span class="divider">|</span>
+                    <a href="#">Support</a>
+                    <span class="divider">|</span>
+                    <a href="#">Feedback</a>
+                </div>
+            </div>
+        </footer>
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT XỬ LÝ LỌC -->
+    <script>
+        function filterNotif(type) {
+            const btnAll = document.getElementById('btn-all');
+            const btnUnread = document.getElementById('btn-unread');
+            const cards = document.querySelectorAll('.notif-card');
+
+            if (type === 'unread') {
+                btnUnread.classList.add('active');
+                btnAll.classList.remove('active');
+                cards.forEach(card => {
+                    if (card.classList.contains('unread')) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else {
+                btnAll.classList.add('active');
+                btnUnread.classList.remove('active');
+                cards.forEach(card => card.style.display = 'flex');
+            }
+        }
+
+        // Đánh dấu đã đọc khi nhấn vào card
+        document.querySelectorAll('.notif-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.remove('unread');
+                const indicator = this.querySelector('.unread-indicator');
+                if (indicator) indicator.style.removeProperty('display'); 
+                // Ở đây bạn có thể thêm logic ẩn indicator tùy ý
+                this.style.borderLeft = 'none';
+                if(indicator) indicator.style.display = 'none';
+            });
+        });
+         function toggleNotif() {
+        var dropdown = document.getElementById("notifDropdown");
+        dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.fa-bell') && !event.target.matches('.notif-btn')) {
+            var dropdown = document.getElementById("notifDropdown");
+            if (dropdown && dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            }
+        }
+    }
+
+    function loadSong(id, name, artist, img) {
+        document.getElementById('current-name').innerText = name;
+        document.getElementById('current-artist').innerText = artist;
+        document.getElementById('current-img').src = img;
+
+        const artistDisplay = document.getElementById('artist-info-display');
+        artistDisplay.style.display = 'block';
+        artistDisplay.innerHTML = `
+            <div class="artist-header">GIỚI THIỆU NGHỆ SĨ</div>
+            <img src="${img}" alt="${artist}">
+            <div class="artist-detail">
+                <h4>${artist}</h4>
+                <button class="btn-follow">Theo dõi</button>
+            </div>
+        `;
+
+        const lyricContent = document.getElementById('lyric-content');
+        lyricContent.innerHTML = `
+            <div style="color: white; font-weight: 600; margin-bottom: 10px;">Đang phát: ${name}</div>
+            Lòng em vẫn thế, vẫn mãi yêu anh<br>
+            Dẫu cho mai sau đời có ra sao...<br>
+            <span style="font-style: italic; font-size: 12px; color: #1DB954;">(Lời bài hát được cung cấp bởi H2T Music)</span>
+        `;
+    }
+
+    function toggleWishlist(event, element) {
+        event.stopPropagation();
+        if (element.tagName === 'I') {
+            element.classList.toggle('fas');
+            element.classList.toggle('far');
+        } else {
+            element.classList.toggle('active');
+            const icon = element.querySelector('i');
+            if (element.classList.contains('active')) {
+                icon.classList.replace('far', 'fas');
+            } else {
+                icon.classList.replace('fas', 'far');
+            }
+        }
+    }
+    </script>
+</body>
+</html>

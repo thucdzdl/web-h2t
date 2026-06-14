@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mixtape - H2T Music</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS bổ trợ để đồng bộ giao diện cột phải và danh sách */
+        .song-row { cursor: pointer; transition: 0.2s; }
+        .song-row:hover { background: rgba(255, 255, 255, 0.1); }
+        
+        .wishlist-btn { 
+            background: transparent; border: none; color: #b3b3b3; 
+            cursor: pointer; transition: 0.2s; font-size: 16px; 
+        }
+        .wishlist-btn:hover { color: #fff; transform: scale(1.2); }
+        .wishlist-btn.active { color: #1DB954; }
+
+        .artist-card-mini { background: #181818; border-radius: 12px; margin: 20px 0; overflow: hidden; }
+        .artist-header { padding: 12px 15px; font-size: 12px; font-weight: 700; color: #b3b3b3; }
+        .artist-card-mini img { width: 100%; height: 180px; object-fit: cover; }
+        .artist-detail { padding: 15px; }
+        .btn-follow { 
+            background: transparent; border: 1px solid #727272; color: #fff; 
+            padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; 
+        }
+
+        /* Group bọc Tên bài hát và Trái tim ở cột phải */
+        .name-heart-wrap { display: flex; align-items: center; gap: 10px; }
+        .name-heart-wrap h5 { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+        /* --- PHẦN SỬA ĐỂ 5 NÚT CÁCH ĐỀU NHAU --- */
+        .volume-area {
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Khoảng cách đồng nhất giữa tất cả các nút */
+            justify-content: flex-end;
+        }
+
+        /* Xử lý chung cho tất cả các icon trong cụm âm lượng */
+        .volume-area i {
+            font-size: 16px;
+            color: #b3b3b3;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 24px; /* Cố định chiều rộng để khoảng cách trông đều tăm tắp */
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 !important; /* Xóa mọi margin cũ bị ghi đè */
+        }
+
+        .volume-area i:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Nút tải xuống cho to hơn một chút nhưng vẫn giữ width 24px để không lệch hàng */
+        .volume-area i.download-btn-player {
+            font-size: 18px;
+        }
+
+        .volume-area input[type="range"] {
+            width: 100px;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>H2T Music</span>
+        </div>
+        <nav class="menu-group">
+            <p class="label">KHÁM PHÁ</p>
+            <ul class="nav-list">
+                <li class="{{ 'active' if request.path == '/' else '' }}"><a href="/"><i class="fas fa-home"></i><span>Trang chủ</span></a></li>
+                <li class="{{ 'active' if request.path == '/trending' else '' }}">
+                    <a href="trending.html">
+                        <i class="fas fa-bolt"></i>
+                        <span>Thịnh hành</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="library.html">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Thư viện</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <nav class="menu-group">
+            <p class="label">CÁ NHÂN</p>
+            <ul>
+                <li><a href="favorites.html"><i class="fas fa-heart"></i> Yêu thích</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> Nghe gần đây</a></li>
+                <li><a href="playlist.html"><i class="fas fa-plus-circle"></i> Playlist</a></li>
+                <li><a href="/downloads"><i class="fas fa-arrow-alt-circle-down"></i><span> Tải xuống</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Bạn muốn nghe gì?">
+                </div>
+            </div>
+            <div class="user-actions">
+                <div class="notification-wrapper">
+                    <button class="notif-btn" onclick="toggleNotif()">
+                        <i class="far fa-bell icon-btn"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <div id="notifDropdown" class="notif-dropdown">
+                        <div class="notif-header">
+                            <h3>Thông báo</h3>
+                        </div>
+                        <div class="notif-content">
+                            <div class="notif-item">
+                                <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                                <p><strong>Sơn Tùng M-TP</strong> vừa ra mắt bài hát mới.</p>
+                            </div>
+                            <div class="notif-item">
+                                <img src="https://i.scdn.co/image/ab67706f000000025ea54a923397d3eac646067b" alt="">
+                                <p>Playlist <strong>Chill cuối tuần</strong> đã được cập nhật.</p>
+                            </div>
+                            <div class="notif-item">
+                                <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                                <p><strong>Hieu Lebalance</strong> vừa ra mắt bài hát mới.</p>
+                            </div>
+                        </div>
+                        <div class="notif-footer">
+                            <a href="/notifications">Xem tất cả</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="/community"><i class="fas fa-users icon-btn"></i></a>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn-login">Đăng nhập</a>
+                </div>
+            </div>
+        </header>
+
+            <!-- Playlist Header -->
+            <section class="playlist-header">
+                <div class="playlist-img">
+                    <!-- Ảnh đại diện cho playlist Lofi -->
+                <img src="https://placehold.co/200x200/ff1493/white?text=Mixtape" alt="Mixtape Cover" style="width: 200px; height: 200px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+<div class="playlist-info">
+    <p class="type">PLAYLIST</p>
+    <h1 class="title" style="font-size: 48px; font-weight: bold; margin: 10px 0;">Mixtape</h1>
+    <p class="description" style="color: #b3b3b3;">Những con beat cực cháy và những bản Rap Mixtape underground đỉnh nhất.</p>
+    <p class="meta" style="color: #b3b3b3; font-size: 14px; margin-top: 5px;"><strong>H2T Music</strong> • 20 bài hát</p>
+</div>
+                </div>
+            </section>
+
+            <div class="songs-container">
+                <div class="action-bar">
+                    <button class="btn-play-big"><i class="fas fa-play"></i></button>
+                </div>
+
+                <table class="song-table">
+                 <thead>
+                        <tr style="border-bottom: 1px solid #2a2a2a; color: #b3b3b3; font-size: 12px; text-transform: uppercase;">
+                            <th style="padding: 10px; width: 5%;">#</th>
+                            <th style="padding: 10px; width: 45%;">TIÊU ĐỀ</th>
+                            <th style="padding: 10px; width: 40%;">NGHỆ SĨ</th>
+                            <th style="padding: 10px; width: 10%; text-align: right;"><i class="far fa-clock"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tbody id="mixtape-track-list">
+    <tr><td colspan="4" style="text-align: center; color: gray; padding: 20px;">Đang lùng sục kho Mixtape siêu cháy...</td></tr>
+</tbody>
+                    </tbody>
+                </table>
+            </div>
+            <footer class="apple-footer-container">
+            <div class="apple-footer-row top">
+                <div class="apple-copyright">
+                    Copyright © 2026 <strong>H2T Music Inc.</strong> All rights reserved.
+                </div>
+                <div class="apple-languages">
+                    <a href="#" class="lang-active">Tiếng Việt</a>
+                    <span class="divider">|</span>
+                    <a href="#">Español (México)</a>
+                    <span class="divider">|</span>
+                    <a href="#">العربية</a>
+                    <span class="divider">|</span>
+                    <a href="#">Русский</a>
+                    <span class="divider">|</span>
+                    <a href="#">简体中文</a>
+                    <span class="divider">|</span>
+                    <a href="#">Français (France)</a>
+                    <span class="divider">|</span>
+                    <a href="#">한국어</a>
+                    <span class="divider">|</span>
+                    <a href="#">Português (Brazil)</a>
+                    <span class="divider">|</span>
+                    <a href="#">United States</a>
+                    <span class="divider">|</span>
+                    <a href="#">繁體中文 (台灣)</a>
+                </div>
+            </div>
+            
+            <div class="apple-footer-row bottom">
+                <div class="apple-legal-links">
+                    <a href="#">Internet Service Terms</a>
+                    <span class="divider">|</span>
+                    <a href="#">H2T Music & Privacy</a>
+                    <span class="divider">|</span>
+                    <a href="#">Cookie Warning</a>
+                    <span class="divider">|</span>
+                    <a href="#">Support</a>
+                    <span class="divider">|</span>
+                    <a href="#">Feedback</a>
+                </div>
+            </div>
+        </footer>
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="right-sidebar">
+           <div id="queue-panel" style="display: block;">
+        <h3>Tiếp theo</h3>
+        <div class="queue" id="queue-list"></div>
+        <div id="artist-info-display" class="artist-card-mini" style="display: none;"></div>
+    </div>
+
+    <div id="lyrics-panel" style="display: none;">
+        <div class="lyrics preview">
+            <p class="label">LỜI BÀI HÁT</p>
+            <div class="lyric-text" id="lyric-content">Hãy chọn một bài hát để cảm nhận...</div>
+        </div>
+    </div>
+        </aside>
+    </div>
+
+    <!-- PLAYER BAR -->
+   <footer class="player-bar">
+        <div class="current-song">
+            <div class="disk-wrapper">
+                <img src="logo.png" id="current-img" class="spinning" style="width: 50px; height: 50px; border-radius: 50%;">
+            </div>
+            <div class="current-song-info" style="margin-left: 15px;">
+                <div class="song-title" id="current-name" style="color: white; font-weight: bold; font-size: 14px;">Chưa có bài hát</div>
+                <div class="song-artist" id="current-artist" style="color: #b3b3b3; font-size: 12px;">H2T Music</div>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <div class="buttons">
+                <i class="fas fa-random"></i>
+                <i class="fas fa-step-backward" onclick="playPrevSong()" style="cursor: pointer;"></i>
+                
+              <i class="fas fa-play-circle" id="master-play" onclick="togglePlayPause()" style="cursor: pointer; font-size: 30px;"></i>
+                <i class="fas fa-step-forward" onclick="playNextSong()" style="cursor: pointer;"></i>
+                <i class="fas fa-redo"></i>
+            </div>
+            <div class="progress-area" id="progress-area" style="cursor: pointer;">
+                <span class="time" id="current-time">0:00</span>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="progress-bar" style="width: 0%;"></div>
+                </div>
+                <span class="time" id="total-time">0:00</span>
+            </div>
+        </div>
+
+        <div class="volume-area" style="display: flex; align-items: center; gap: 15px; color: #b3b3b3; font-size: 16px;">
+            <i class="fas fa-microphone-alt" title="Lời bài hát" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b3b3b3'"></i>
+            <i class="fas fa-list-ul" title="Hàng chờ" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b3b3b3'"></i>
+            <i class="fas fa-arrow-alt-circle-down download-btn-player" title="Tải xuống bài hát" onclick="showDownloadAlert()" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#b3b3b3'"></i>
+            
+            <div style="display: flex; align-items: center; gap: 8px; margin-left: 10px;">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" id="volume-slider" min="0" max="100" value="70" style="cursor: pointer; width: 90px;">
+            </div>
+        </div>
+    </footer>
+
+<script>
+let mixtapePlayer = new Audio();
+
+window.onload = async function() {
+    const trackList = document.getElementById('mixtape-track-list');
+    if (!trackList) return;
+    
+    // Hiển thị trạng thái đang tải
+    trackList.innerHTML = '<tr><td colspan="4" style="color: gray; padding: 20px; text-align: center;">Đang lùng sục Mixtape trên YouTube... ⏳</td></tr>';
+
+    try {
+        // 1. Gọi thẳng vào API YouTube C# của Thức
+        const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/youtubemusic/search?keyword=${encodeURIComponent('rap việt mixtape')}`);
+        const songs = await response.json();
+        
+        trackList.innerHTML = ""; // Xóa chữ đang tải
+
+        // 2. Vẽ giao diện bảng <tr> <td> giữ nguyên form cũ
+        songs.forEach((song, index) => {
+            const safeTitle = song.title.replace(/'/g, "\\'");
+            const safeArtist = song.artist.replace(/'/g, "\\'");
+
+            const html = `
+            <tr class="song-row" style="cursor: pointer; transition: 0.2s;"
+                onmouseover="this.style.background='#2a2a2a'"
+                onmouseout="this.style.background='transparent'"
+                onclick="getStreamAndPlay('${song.id}', '${safeTitle}', '${safeArtist}', '${song.thumbnail}')">
+                
+                <td style="color: #b3b3b3; padding: 12px 10px;">${index + 1}</td>
+                <td style="padding: 12px 10px;">
+                    <div class="song-item" style="display: flex; align-items: center;">
+                        <img src="${song.thumbnail}" alt="" style="width: 45px; height: 45px; border-radius: 4px; margin-right: 15px; object-fit: cover;">
+                        <div class="song-name" style="color: white; font-size: 15px; font-weight: bold;">${song.title}</div>
+                    </div>
+                </td>
+                <td style="color: #b3b3b3; padding: 12px 10px;">${song.artist}</td>
+                <td style="text-align: right; padding: 12px 10px;">
+                    <i class="fas fa-play-circle" id="master-play"
+                </td>
+            </tr>`;
+            trackList.insertAdjacentHTML('beforeend', html);
+        });
+    } catch (err) {
+        trackList.innerHTML = `<tr><td colspan="4" style="color: red; padding: 20px; text-align: center;">Lỗi tải nhạc: ${err.message}</td></tr>`;
+    }
+};
+
+// ==================================================
+// HÀM PHÁT NHẠC YOUTUBE (BẢN CHỐNG LỖI HIỂN THỊ)
+// ==================================================
+// 3. Hàm phát nhạc 
+async function getStreamAndPlay(videoId, title, artist, thumbnail) {
+    
+    // Gọi đúng tên ID mà Thức đã đặt
+    document.getElementById('current-name').innerText = title;
+    document.getElementById('current-artist').innerText = artist;
+    document.getElementById('current-img').src = thumbnail;
+
+    try {
+        const response = await fetch(`http://thucpham111-001-site1.stempurl.com/api/youtubemusic/play/${videoId}`);
+        
+        // 1. Kiểm tra xem Server có báo lỗi 500 không
+        if (!response.ok) {
+            // Đọc lỗi dạng text trả về từ Server để in ra Console chứ không ép kiểu JSON
+            const errorText = await response.text(); 
+            console.error("Lỗi từ C#:", errorText);
+            throw new Error("Bài hát này bị YouTube đánh bản quyền hoặc chặn vùng, không thể phát!");
+        }
+
+        // 2. Nếu thành công (mã 200) thì mới ép kiểu JSON
+        const data = await response.json();
+        
+      const audioPlayer = document.getElementById('main-audio'); 
+        if(audioPlayer) {
+            audioPlayer.src = data.streamUrl;
+            audioPlayer.play();
+            document.getElementById('master-play').className = 'fas fa-pause-circle';
+
+            // === BẮT ĐẦU ĐOẠN GHI LỊCH SỬ LÊN SERVER (DÁN VÀO ĐÂY) ===
+            const loggedInUser = localStorage.getItem('username'); 
+            if (loggedInUser) {
+                fetch('http://thucpham111-001-site1.stempurl.com/api/history', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: loggedInUser,
+                        videoId: videoId,
+                        title: title,
+                        artist: artist,
+                        thumbnail: thumbnail
+                    })
+                })
+                .then(res => res.json())
+                .then(data => console.log("💾 Lịch sử:", data.message))
+                .catch(err => console.error("❌ Lỗi lưu:", err));
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        // Hiển thị thông báo lỗi thân thiện cho người dùng
+        alert("Có lỗi: " + error.message);
+    }
+}
+
+
+function playMixtape(url, title, artist, cover) {
+    if (!url || url === 'undefined') return;
+    
+    if (typeof ytPlayer !== 'undefined' && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+
+    mixtapePlayer.src = url;
+    mixtapePlayer.play();
+    
+    document.getElementById('current-song-title').innerText = title;
+    document.getElementById('current-artist').innerText = artist;
+    const currentImg = document.getElementById('current-img');
+    if (currentImg) currentImg.src = cover || "https://placehold.co/50x50/ff1493/white?text=Mix";
+}
+
+</script>
+    <script src="auth.js"></script>
+<audio id="main-audio" style="display: none;"></audio>
+    <script src="auth.js?version=final"></script>
+</body>
+</html>

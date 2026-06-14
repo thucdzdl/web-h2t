@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H2T Radio Trực Tiếp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            background: #000; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* KHU VỰC BÊN TRÁI: ĐÀI PHÁT RADIO */
+        .radio-left {
+            flex: 6; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            border-right: 1px solid #282828; position: relative;
+        }
+
+        .live-badge { 
+            background: #fb233b; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 13px; 
+            letter-spacing: 1px; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(251, 35, 59, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 35, 59, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 35, 59, 0); }
+        }
+
+        .visualizer { display: flex; gap: 8px; justify-content: center; height: 100px; align-items: flex-end; margin: 40px 0; }
+        .bar { 
+            width: 12px; border-radius: 5px 5px 0 0; background: #1db954; 
+            animation: bounce 0.5s infinite alternate; animation-play-state: paused; 
+        }
+        @keyframes bounce { from { height: 15px; } to { height: 100px; } }
+
+        .btn-control {
+            background: white; color: black; border: none; padding: 15px 40px; 
+            border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 20px;
+        }
+        .btn-control:hover { transform: scale(1.05); }
+
+        .btn-back { position: absolute; top: 30px; left: 30px; color: #888; text-decoration: none; font-size: 16px; }
+        .btn-back:hover { color: white; }
+
+        /* KHU VỰC BÊN PHẢI: KHUNG CHAT LIVE */
+        .chat-right {
+            flex: 4; display: flex; flex-direction: column; background: #121212; height: 100%;
+        }
+
+        .chat-header { padding: 20px; border-bottom: 1px solid #282828; font-weight: bold; font-size: 18px; color: #1db954; }
+
+        .chat-box {
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
+        }
+        .chat-box::-webkit-scrollbar { width: 6px; }
+        .chat-box::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .chat-message { display: flex; flex-direction: column; }
+        .chat-message .user { font-weight: bold; color: #b3b3b3; font-size: 13px; margin-bottom: 3px; }
+        .chat-message .text { background: #282828; padding: 10px 15px; border-radius: 15px; width: fit-content; max-width: 85%; line-height: 1.4; }
+        
+        .chat-message.my-msg { align-items: flex-end; }
+        .chat-message.my-msg .text { background: #1db954; color: black; font-weight: 500; }
+
+        .chat-input {
+            padding: 20px; border-top: 1px solid #282828; display: flex; gap: 10px; align-items: center;
+        }
+        .chat-input input {
+            flex: 1; padding: 12px 20px; border-radius: 20px; border: none; background: #282828; color: white; outline: none;
+        }
+        .chat-input button {
+            background: #1db954; color: black; border: none; 
+            width: 45px; height: 45px; /* Fix cứng kích thước để không bị méo */
+            border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
+        .chat-input button:hover { background: #1ed760; }
+    </style>
+</head>
+<body>
+
+    <div class="radio-left">
+        <a href="community.html" class="btn-back"><i class="fas fa-arrow-left"></i> Rời phòng</a>
+        
+        <span class="live-badge"><i class="fas fa-broadcast-tower"></i> TRỰC TIẾP</span>
+        <h1 style="font-size: 48px; margin: 20px 0; font-weight: 900; letter-spacing: -1px;">H2T Midnight Radio</h1>
+        
+        <div style="background: rgba(255,255,255,0.1); padding: 10px 25px; border-radius: 30px; display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-compact-disc fa-spin" style="font-size: 35px; color: #1db954;"></i>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">Study With Me 📚 Pomodoro</div>
+                <div style="color: #b3b3b3; font-size: 13px;">Lofi Girl (Live 24/7)</div>
+            </div>
+        </div>
+        
+        <div class="visualizer">
+            <div class="bar" style="animation-delay: 0.1s"></div>
+            <div class="bar" style="animation-delay: 0.3s"></div>
+            <div class="bar" style="animation-delay: 0.2s"></div>
+            <div class="bar" style="animation-delay: 0.4s"></div>
+            <div class="bar" style="animation-delay: 0.1s"></div>
+        </div>
+
+        <button class="btn-control" id="play-btn" onclick="toggleRadio()">
+            <i class="fas fa-play"></i> BẮT ĐẦU NGHE
+        </button>
+
+        <div id="yt-player" style="display: none;"></div>
+    </div>
+
+    <div class="chat-right">
+        <div class="chat-header">
+            <i class="fas fa-comments"></i> Live Chat Phòng Radio
+        </div>
+        
+        <div class="chat-box" id="radio-chat">
+            <div style="text-align: center; color: gray; margin-top: 20px;">Đang kết nối máy chủ Chat...</div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Trò chuyện cùng mọi người..." onkeypress="handleEnter(event)">
+            <button onclick="sendComment()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 1. CHẠY NHẠC YOUTUBE
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var isPlaying = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-player', {
+                height: '0', width: '0',
+                videoId: 'qGohtGC5Rtk', // Link Pomodoro của bạn
+                playerVars: {
+                    'autoplay': 0, 'controls': 0, 'playsinline': 1,
+                    'origin': window.location.origin, 'enablejsapi': 1
+                }
+            });
+        }
+
+        function toggleRadio() {
+            const btn = document.getElementById('play-btn');
+            const visualizerBars = document.querySelectorAll('.bar');
+
+            if (!player || typeof player.playVideo !== 'function') {
+                alert("Trạm phát sóng đang khởi động, vui lòng đợi 1 giây!");
+                return;
+            }
+
+            if (!isPlaying) {
+                player.unMute();
+                player.setVolume(100);
+                player.playVideo();
+                btn.innerHTML = '<i class="fas fa-pause"></i> TẠM DỪNG';
+                btn.style.background = '#fb233b'; btn.style.color = 'white';
+                visualizerBars.forEach(bar => bar.style.animationPlayState = 'running');
+                isPlaying = true;
+            } else {
+                player.pauseVideo();
+                btn.innerHTML = '<i class="fas fa-play"></i> BẮT ĐẦU NGHE';
+                btn.style.background = 'white'; btn.style.color = 'black';
+                visualizerBars.forEach(bar => bar.style.animationPlayState = 'paused');
+                isPlaying = false;
+            }
+        }
+
+        // 2. CHẠY LIVE CHAT REAL-TIME BẰNG C#
+        const API_URL = 'http://thucpham111-001-site1.stempurl.com/api/community/comments';
+        
+        function getCurrentUser() {
+            const loggedInUser = localStorage.getItem('username') || localStorage.getItem('currentUser');
+            if (!loggedInUser) return "Khách (Chưa đăng nhập)";
+            if (loggedInUser.startsWith('{')) return JSON.parse(loggedInUser).username;
+            return loggedInUser;
+        }
+
+        const myUsername = getCurrentUser();
+
+        async function loadRadioComments() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) return;
+                const comments = await res.json();
+                
+                const chatBox = document.getElementById('radio-chat');
+                chatBox.innerHTML = ''; 
+
+                comments.reverse().forEach(c => {
+                    const isMyMessage = c.username === myUsername;
+                    chatBox.innerHTML += `
+                        <div class="chat-message ${isMyMessage ? 'my-msg' : ''}">
+                            ${isMyMessage ? '' : `<span class="user">${c.username}</span>`}
+                            <span class="text">${c.content}</span>
+                        </div>
+                    `;
+                });
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (e) {
+                console.log("Đợi Server C#...");
+            }
+        }
+
+        async function sendComment() {
+            const input = document.getElementById('chat-input');
+            const content = input.value.trim();
+            if (!content) return; 
+
+            if (myUsername.includes("Chưa đăng nhập")) {
+                alert("Vui lòng đăng nhập để chat!");
+                return;
+            }
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Username: myUsername, Content: content })
+                });
+
+                input.value = ''; 
+                loadRadioComments(); 
+            } catch (e) {
+                alert("Lỗi! Server C# đang tắt, hãy mở lại terminal C# nhé.");
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendComment();
+        }
+
+        setInterval(loadRadioComments, 2000);
+        loadRadioComments();
+    </script>
+</body>
+</html>

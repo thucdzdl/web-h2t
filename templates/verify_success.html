@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác thực thành công - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png?v=1.1">
+    <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0b0b0b;
+        color: white;
+        display: flex;
+        justify-content: center; /* Căn giữa ngang */
+        align-items: center;     /* Căn giữa dọc */
+        min-height: 100vh;       /* Chiều cao toàn màn hình */
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .verify-card {
+        background: #ffffff;
+        color: #000;
+        width: 100%;
+        max-width: 450px;
+        padding: 50px 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        /* Hiệu ứng hiện ra mượt mà */
+        animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-box { margin-bottom: 30px; }
+    .logo-box img { width: 80px; border-radius: 12px; }
+    
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #1DB954;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        margin: 0 auto 25px;
+        box-shadow: 0 10px 20px rgba(29, 185, 84, 0.3);
+    }
+
+    h1 { font-weight: 800; font-size: 28px; margin-bottom: 15px; color: #000; }
+    p { color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px; }
+    
+    .price-box {
+        background: #f8f8f8;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+    .old-price { text-decoration: line-through; color: #999; font-size: 14px; }
+    .new-price { color: #1DB954; font-size: 24px; font-weight: 800; display: block; margin-top: 5px; }
+
+    .btn-payment {
+        display: block;
+        width: 100%;
+        padding: 18px;
+        background: #1DB954;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 16px;
+        transition: 0.3s;
+        box-sizing: border-box; /* Đảm bảo padding không làm tràn nút */
+    }
+    
+    .btn-payment:hover { 
+        background: #1ed760; 
+        transform: scale(1.03); 
+    }
+
+    .confetti { position: absolute; width: 10px; height: 10px; background: #1DB954; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="verify-card">
+    <div class="logo-box">
+        <img src="logo.png" alt="H2T Music">
+    </div>
+
+    <div class="success-icon">
+        <i class="fas fa-check"></i>
+    </div>
+
+    <h1>Xác thực thành công!</h1>
+    <p>Chúc mừng! Hồ sơ sinh viên của bạn đã được duyệt. Bạn đã đủ điều kiện nhận ưu đãi đặc biệt.</p>
+
+    <div class="price-box">
+        <span class="old-price">150.000 VNĐ / tháng</span>
+        <span class="new-price">CHỈ 50.000 VNĐ / THÁNG</span>
+    </div>
+
+    <a href="{{ url_for('checkout_sv') }}" class="btn-payment">TIẾP TỤC THANH TOÁN</a>
+</div>
+
+<script>
+    // Hiệu ứng pháo hoa giấy đơn giản
+    function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.backgroundColor = ['#1DB954', '#1ed760', '#ffffff'][Math.floor(Math.random() * 3)];
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            document.body.appendChild(confetti);
+
+            confetti.animate([
+                { transform: 'translateY(0) rotate(0)', opacity: 1 },
+                { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 3000 + 2000,
+                easing: 'linear'
+            }).onfinish = () => confetti.remove();
+        }
+    }
+    window.onload = createConfetti;
+</script>
+</body>
+</html>

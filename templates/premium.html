@@ -1,0 +1,370 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Khám phá Premium - H2T Music</title>
+        <link rel="icon" type="image/png" href="logo.png">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+        <style>
+            /* 1. THÊM HIỆU ỨNG CUỘN MƯỢT CHO TOÀN TRANG */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* CSS dành riêng cho trang Premium */
+            .premium-hero {
+                background: linear-gradient(135deg, #1d4ed8, #7e22ce, #db2777);
+                padding: 80px 32px;
+                text-align: center;
+                border-radius: 12px;
+                margin-bottom: 60px;
+            }
+            .premium-hero h1 { font-size: 42px; font-weight: 900; line-height: 1.2; margin-bottom: 20px; color: #fff; }
+            .premium-hero p { font-size: 18px; color: #f3f4f6; margin-bottom: 40px; }
+            
+            .hero-btns { display: flex; justify-content: center; gap: 15px; }
+            .btn-white { background: #fff; color: #000; padding: 14px 32px; border-radius: 30px; font-weight: 700; text-decoration: none; transition: 0.3s ease; }
+            .btn-outline { border: 2px solid #fff; color: #fff; padding: 12px 30px; border-radius: 30px; font-weight: 700; text-decoration: none; transition: 0.3s ease; }
+            
+            .btn-white:hover { transform: scale(1.05); background-color: #f8f8f8; }
+            .btn-outline:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
+
+            .section-title-center { text-align: center; margin-bottom: 50px; }
+            .section-title-center h2 { font-size: 36px; font-weight: 900; margin-bottom: 15px; }
+            .section-title-center p { color: #b3b3b3; font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+            /* Grid các gói cước */
+            .plans-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+                margin-bottom: 80px;
+            }
+
+            /* SỬA LỖI HOVER TẠI ĐÂY */
+            .plan-card {
+                background: #181818;
+                padding: 40px 24px;
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+                border: 1px solid #282828;
+                /* Quan trọng: transition giúp mượt mà */
+                transition: transform 0.3s cubic-bezier(0.3, 0, 0, 1), background-color 0.3s ease, border-color 0.3s ease;
+                cursor: pointer;
+            }
+
+            /* Hiệu ứng phóng to và sáng nền giống video */
+            .plan-card:hover {
+                transform: scale(1.03); /* Phóng to nhẹ */
+                background: #282828;   /* Sáng nền lên */
+                border-color: #535353; /* Làm rõ viền */
+            }
+
+            .plan-tag { background: #fff; color: #000; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; align-self: flex-start; margin-bottom: 15px; }
+            .plan-name { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
+            .plan-price { font-size: 18px; font-weight: 700; margin-bottom: 25px; border-bottom: 1px solid #282828; padding-bottom: 20px; }
+            .plan-features { list-style: none; padding: 0; margin-bottom: 30px; flex-grow: 1; }
+            .plan-features li { margin-bottom: 12px; color: #fff; font-size: 14px; position: relative; padding-left: 20px; }
+            .plan-features li::before { content: "•"; position: absolute; left: 0; color: #1DB954; }
+            
+            .btn-plan { text-align: center; padding: 14px; border-radius: 30px; font-weight: 700; text-decoration: none; transition: 0.3s ease; margin-bottom: 10px; }
+            
+            /* Hiệu ứng hover cho nút trong thẻ */
+            .btn-plan:hover { transform: scale(1.04); filter: brightness(1.1); }
+
+            .plan-individual .btn-plan { background: #fecaca; color: #000; }
+            .plan-student .btn-plan { background: #c7d2fe; color: #000; }
+            .plan-duo .btn-plan { background: #fde68a; color: #000; }
+            .plan-family .btn-plan { background: #bae6fd; color: #000; }
+
+            /* Bảng so sánh */
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 60px 0;
+                background: #121212;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 20px;
+                text-align: left;
+                border-bottom: 1px solid #282828;
+            }
+            .comparison-table th { font-size: 18px; font-weight: 900; }
+            .comparison-table .check-icon { color: #1DB954; font-size: 20px; }
+            .highlight-col { background: #1a1a1a; border-radius: 8px 8px 0 0; }
+        </style>
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="Logo">
+                <span>H2T Music</span>
+            </div>
+            <nav class="menu-group">
+                <p class="label">KHÁM PHÁ</p>
+                <ul class="nav-list">
+                    <li class="{{ 'active' if request.path == '/' else '' }}"><a href="index.html"><i class="fas fa-home"></i><span>Trang chủ</span></a></li>
+                    <li class="{{ 'active' if request.path == '/trending' else '' }}">
+                        <a href="trending.html">
+                            <i class="fas fa-bolt"></i>
+                            <span>Thịnh hành</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="library.html">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Thư viện</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <nav class="menu-group">
+                <p class="label">CÁ NHÂN</p>
+                <ul>
+                    <li><a href="favorites.html"><i class="fas fa-heart"></i> Yêu thích</a></li>
+                    <li><a href="history.html"><i class="fas fa-history"></i> Nghe gần đây</a></li>
+                    <li><a href="playlist.html"><i class="fas fa-plus-circle"></i> Playlist</a></li>
+                    <li><a href="downloads.html"><i class="fas fa-arrow-alt-circle-down"></i><span> Tải xuống</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background-color: transparent; margin-bottom: 20px;">
+                
+                <div class="search-container">
+                    <div class="search-bar" style="display: flex; align-items: center; background-color: #242424; border-radius: 25px; padding: 10px 18px; width: 350px;">
+                        <i class="fas fa-search" style="color: #b3b3b3; margin-right: 12px; font-size: 16px;"></i>
+                        <input type="text" placeholder="Bạn muốn nghe gì?" style="background: transparent; border: none; color: white; outline: none; width: 100%; font-family: 'Inter', sans-serif; font-size: 14px;">
+                    </div>
+                </div>
+                
+                <div class="user-actions" style="display: flex; align-items: center; gap: 24px;">
+                    
+                    <div class="notification-wrapper" style="position: relative;">
+                        <div style="position: relative; cursor: pointer;" onclick="toggleNotif()" title="Thông báo">
+                            <i class="far fa-bell icon-btn" style="color: #b3b3b3; font-size: 20px; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'"></i>
+                            <span style="position: absolute; top: -6px; right: -6px; background-color: #ff0000; color: white; font-size: 11px; font-weight: bold; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">3</span>
+                        </div>
+                        
+                        <div id="notifDropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Thông báo</h3>
+                            </div>
+                            <div class="notif-content">
+                                <div class="notif-item">
+                                    <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                                    <p><strong>Sơn Tùng M-TP</strong> vừa ra mắt bài hát mới.</p>
+                                </div>
+                                <div class="notif-item">
+                                    <img src="https://i.scdn.co/image/ab67706f000000025ea54a923397d3eac646067b" alt="">
+                                    <p>Playlist <strong>Chill cuối tuần</strong> đã được cập nhật.</p>
+                                </div>
+                                <div class="notif-item">
+                                    <img src="https://i.ytimg.com/vi/a6as_VovpSg/maxresdefault.jpg" alt="">
+                                    <p><strong>Hieu Lebalance</strong> vừa ra mắt bài hát mới.</p>
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="/notifications">Xem tất cả</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="/community" style="color: #b3b3b3; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'" title="Cộng đồng">
+                        <i class="fas fa-users" style="font-size: 20px;"></i>
+                    </a>
+
+                    <a href="/friends" style="color: #b3b3b3; text-decoration: none; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#b3b3b3'" title="Bạn bè">
+                        <i class="fas fa-user-friends" style="font-size: 20px;"></i>
+                    </a>
+
+                    <div class="auth-buttons" id="auth-section">
+                        <a href="login.html" class="btn-login" style="display: inline-block; background: white; color: black; padding: 10px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 15px; transition: all 0.2s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Đăng nhập</a>
+                    </div>
+                </div>
+            </header>
+
+                <!-- Hero Section -->
+                <section class="premium-hero">
+                    <h1>Hãy thử cảm giác mới với H2T Premium.</h1>
+                    <p>Thay vì phí hoài thanh xuân để chờ "Bỏ qua", hãy bỏ ra 150.000 VNĐ để sống như một vị thần. H2T Premium chấp hết mọi loại gián đoạn.</p>
+                    <div class="hero-btns">
+                        <a href="checkout.html" class="btn-white">Mua H2T Premium </a>
+                        <!-- 2. CẬP NHẬT HREF ĐỂ TRỎ XUỐNG PHẦN GÓI CƯỚC -->
+                        <a href="#all-plans" class="btn-outline">Xem tất cả các gói</a>
+                    </div>
+                    <p style="font-size: 12px; margin-top: 20px; text-decoration: underline;">Có áp dụng điều khoản.</p>
+                </section>
+
+                <!-- Plans Section -->
+                <div class="section-title-center">
+                    <h2>Gói hợp túi tiền cho mọi hoàn cảnh</h2>
+                    <p>Chọn một gói Premium để nghe nhạc không quảng cáo thỏa thích trên điện thoại, loa và các thiết bị khác. Thanh toán theo nhiều cách. Hủy bất cứ lúc nào.</p>
+                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                        <img src="static/payment.png" height="20">
+                    </div>
+                </div>
+
+                <!-- 3. THÊM ID="all-plans" ĐỂ LIÊN KẾT VỚI NÚT TRÊN -->
+                <div id="all-plans" class="plans-grid">
+                    <!-- Individual -->
+                    <div class="plan-card plan-individual">
+                        <span class="plan-tag">Premium</span>
+                        <h3 class="plan-name">H2T Cá Nhân</h3>
+                        <p class="plan-price">150.000 VNĐ / tháng</p>
+                        <ul class="plan-features">
+                            <li>1 tài khoản Premium</li>
+                            <li>Nghe nhạc không quảng cáo</li>
+                            <li>Tải xuống để nghe ngoại tuyến</li>
+                            <li>Hủy bất cứ lúc nào</li>
+                        </ul>
+                        <!-- Flask sẽ tìm hàm def checkout() trong app.py và lấy đường dẫn tương ứng -->
+                        <a href="checkout.html" class="btn-plan">Mua H2T Cá Nhân</a>
+                        <p style="font-size: 11px; text-align: center; color: #b3b3b3;">Dành cho cá nhân.</p>
+                    </div>
+
+                    <!-- Student -->
+                    <div class="plan-card plan-student">
+                        <span class="plan-tag">Premium</span>
+                        <h3 class="plan-name">H2T Sinh Viên</h3>
+                        <p class="plan-price">50.000 VNĐ / tháng</p>
+                        <ul class="plan-features">
+                            <li>1 tài khoản Premium đã xác minh</li>
+                            <li>Giảm giá cho sinh viên đủ điều kiện</li>
+                            <li>Chất lượng âm thanh tuyệt vời</li>
+                            <li>Hủy bất cứ lúc nào</li>
+                        </ul>
+                        <a href="student_verify.html" class="btn-plan">Mua H2T Sinh Viên</a>
+                        <p style="font-size: 11px; text-align: center; color: #b3b3b3;">Dành cho sinh viên đại học.</p>
+                    </div>
+
+                    <!-- Family -->
+                    <div class="plan-card plan-family">
+                        <span class="plan-tag">Premium</span>
+                        <h3 class="plan-name">H2T Gia Đình</h3>
+                        <p class="plan-price">299.000 VNĐ / tháng</p>
+                        <ul class="plan-features">
+                            <li>Tối đa 6 tài khoản Premium</li>
+                            <li>Quyền kiểm soát của cha mẹ</li>
+                            <li>Kho nhạc riêng cho trẻ em</li>
+                            <li>Hủy bất cứ lúc nào</li>
+                        </ul>
+                        <a href="checkoutGD.html" class="btn-plan">Mua H2T Gia Đình</a>
+                        <p style="font-size: 11px; text-align: center; color: #b3b3b3;">Dành cho gia đình cùng địa chỉ.</p>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="section-title-center">
+                    <h2>Trải nghiệm sự khác biệt</h2>
+                    <p>Dùng Premium để nắm toàn quyền kiểm soát trải nghiệm nghe nhạc.</p>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Lợi ích dành cho bạn</th>
+                            <th>Gói Free của H2T</th>
+                            <th class="highlight-col"> Gói H2T Premium</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nghe nhạc không quảng cáo</td>
+                            <td>—</td>
+                            <td class="highlight-col"><i class="fas fa-check-circle check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Tải bài hát xuống</td>
+                            <td>—</td>
+                            <td class="highlight-col"><i class="fas fa-check-circle check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Phát nhạc theo thứ tự bất kỳ</td>
+                            <td>—</td>
+                            <td class="highlight-col"><i class="fas fa-check-circle check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Âm thanh chất lượng cao Lossless</td>
+                            <td>—</td>
+                            <td class="highlight-col"><i class="fas fa-check-circle check-icon"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <footer class="apple-footer-container">
+                <div class="apple-footer-row top">
+                    <div class="apple-copyright">
+                        Copyright © 2026 <strong>H2T Music Inc.</strong> All rights reserved.
+                    </div>
+                    <div class="apple-languages">
+                        <a href="#" class="lang-active">Tiếng Việt</a>
+                        <span class="divider">|</span>
+                        <a href="#">Español (México)</a>
+                        <span class="divider">|</span>
+                        <a href="#">العربية</a>
+                        <span class="divider">|</span>
+                        <a href="#">Русский</a>
+                        <span class="divider">|</span>
+                        <a href="#">简体中文</a>
+                        <span class="divider">|</span>
+                        <a href="#">Français (France)</a>
+                        <span class="divider">|</span>
+                        <a href="#">한국어</a>
+                        <span class="divider">|</span>
+                        <a href="#">Português (Brazil)</a>
+                        <span class="divider">|</span>
+                        <a href="#">United States</a>
+                        <span class="divider">|</span>
+                        <a href="#">繁體中文 (台灣)</a>
+                    </div>
+                </div>
+                
+                <div class="apple-footer-row bottom">
+                    <div class="apple-legal-links">
+                        <a href="#">Internet Service Terms</a>
+                        <span class="divider">|</span>
+                        <a href="#">H2T Music & Privacy</a>
+                        <span class="divider">|</span>
+                        <a href="#">Cookie Warning</a>
+                        <span class="divider">|</span>
+                        <a href="#">Support</a>
+                        <span class="divider">|</span>
+                        <a href="#">Feedback</a>
+                    </div>
+                </div>
+            </footer>
+            </main>
+            
+        </div>
+        <script>
+            function showDownloadAlert() {
+            alert("Bạn cần đăng nhập và mua premimum H2T để tải về");
+        }
+    function toggleNotif() {
+        var dropdown = document.getElementById("notifDropdown");
+        if (dropdown.style.display === "block") {
+            dropdown.style.display = "none";
+        } else {
+            dropdown.style.display = "block";
+        }
+    }
+
+    // Đóng thông báo khi click ra ngoài vùng chuông
+    window.onclick = function(event) {
+        if (!event.target.matches('.fa-bell') && !event.target.matches('.notif-btn')) {
+            var dropdown = document.getElementById("notifDropdown");
+            if (dropdown && dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            }
+        }
+    }
+    </script>
+    <script src="auth.js?version=final"></script>
+    </body>
+    </html>

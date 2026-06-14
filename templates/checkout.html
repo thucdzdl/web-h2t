@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0b0b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .checkout-wrapper {
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .banner-container { width: 100%; background-color: #121212; }
+        .banner-container img { width: 100%; display: block; }
+
+        .checkout-container { padding: 24px; }
+
+        .checkout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; }
+        .logo-box img { height: 28px; border-radius: 4px; }
+
+        .plan-card {
+            background-color: #121212;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .plan-price { font-weight: bold; font-size: 16px; }
+
+        /* --- PHƯƠNG THỨC THANH TOÁN --- */
+        .payment-option {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.active {
+            border: 2px solid #1DB954;
+            background-color: #fafff7;
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .radio-circle {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+        }
+
+        .payment-option.active .radio-circle {
+            border-color: #1DB954;
+            background: radial-gradient(#1DB954 50%, transparent 50%);
+        }
+
+        /* Phần nội dung mở rộng */
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .payment-option.active .details-content {
+            max-height: 400px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Form nhập thẻ */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .total-summary {
+            background-color: #f9f9f9;
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 900;
+            margin: 24px 0;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="checkout-wrapper">
+    <div class="banner-container">
+        <img src="logo.png" alt="Banner">
+    </div>
+
+    <div class="checkout-container">
+        <header class="checkout-header">
+            <div class="logo-box">
+                <img src="logo.png" alt="Logo">
+                <span>H2T Music</span>
+            </div>
+            <a href="/premium" style="font-size: 12px; color: #666; text-decoration: underline;">Thay đổi gói</a>
+        </header>
+
+        <section class="plan-card">
+            <div>
+                <h3 style="margin:0;">H2T Cá Nhân</h3>
+                <p style="margin:4px 0 0; font-size:12px; color:#b3b3b3;">1 tài khoản Premium</p>
+            </div>
+            <div class="plan-price">150.000đ</div>
+        </section>
+
+        <div style="font-weight:bold; margin-bottom:15px;">Phương thức thanh toán</div>
+
+        <!-- LỰA CHỌN MOMO -->
+        <div class="payment-option" onclick="selectOption(this)">
+            <div class="option-header">
+                <span class="radio-circle"></span>
+                <span>Ví MoMo</span>
+                <img src="momo.png" style="height:24px; margin-left:auto;">
+            </div>
+            <div class="details-content">
+                Bạn sẽ được chuyển hướng đến ứng dụng MoMo để hoàn tất giao dịch.
+            </div>
+        </div>
+
+        <!-- LỰA CHỌN THẺ -->
+        <div class="payment-option active" onclick="selectOption(this)">
+            <div class="option-header">
+                <span class="radio-circle"></span>
+                <span>Thẻ tín dụng hoặc ghi nợ</span>
+                <div style="margin-left:auto;">
+                    <img src="payment.png" height="14">
+                </div>
+            </div>
+            <div class="details-content">
+                <input type="text" placeholder="Số thẻ: 0000 0000 0000 0000">
+                <div class="form-row">
+                    <input type="text" placeholder="MM/YY">
+                    <input type="text" placeholder="CVV">
+                </div>
+            </div>
+        </div>
+
+        <section class="total-summary">
+            <span>Tổng số tiền</span>
+            <span>150.000 VNĐ</span>
+        </section>
+
+       <form action="#" onsubmit="event.preventDefault();">
+           <button type="button" 
+        onclick="processPayment(this)" 
+        style="width: 100%; height: 55px; background-color: #1DB954; color: white; border: none; border-radius: 50px; font-size: 16px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px;">
+    HOÀN TẤT GIAO DỊCH
+</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Hàm chọn phương thức thanh toán giữ nguyên
+    function selectOption(element) {
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    // ĐỘNG CƠ THANH TOÁN MỚI (CÓ GỌI API)
+    async function processPayment(btn) {
+        // 1. Đổi giao diện nút thành đang xử lý
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+
+        // 2. Tìm xem ai đang đăng nhập để nâng cấp cho người đó
+        const loggedInUser = localStorage.getItem('username') || localStorage.getItem('currentUser'); 
+        if (!loggedInUser) {
+            alert("Vui lòng đăng nhập để thực hiện giao dịch!");
+            window.location.href = "login.html";
+            return;
+        }
+
+        let userToUpgrade = loggedInUser;
+        if (loggedInUser.startsWith('{')) { 
+            userToUpgrade = JSON.parse(loggedInUser).username; 
+        }
+
+        // 3. Gửi yêu cầu qua cổng hải quan C# (Cổng 5043)
+        try {
+            const response = await fetch('http://thucpham111-001-site1.stempurl.com/api/users/upgrade-premium', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Username: userToUpgrade })
+            });
+
+            if (response.ok) {
+                // Server C# đã gật đầu, cập nhật thẻ VIP vào bộ nhớ
+                localStorage.setItem('isPremium', 'true');
+                
+                // Đá văng sang trang chúc mừng
+                window.location.href = "success.html"; 
+            } else {
+                const errorData = await response.json();
+                alert("Lỗi thanh toán: " + errorData.message);
+                
+                // Trả lại hình dáng ban đầu cho nút bấm nếu lỗi
+                btn.innerHTML = 'HOÀN TẤT GIAO DỊCH';
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Mất kết nối đến Server C#!");
+            
+            // Trả lại hình dáng ban đầu cho nút bấm
+            btn.innerHTML = 'HOÀN TẤT GIAO DỊCH';
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+        }
+    }
+</script>
+<script src="auth.js?version=final"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cộng Đồng Fan - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            background: #0b0b0b; color: white; font-family: 'Segoe UI', sans-serif; 
+            display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; 
+            background-image: radial-gradient(circle at top right, #1a1a1a, #000);
+        }
+        
+        .container { 
+            background: #121212; width: 800px; height: 85vh; border-radius: 15px; 
+            display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+            overflow: hidden; border: 1px solid #282828; 
+        }
+        
+        /* === NỬA TRÊN: BỤC VINH QUANG TOP FANS === */
+        .leaderboard { 
+            padding: 30px; background: linear-gradient(180deg, rgba(29,185,84,0.1) 0%, #121212 100%); 
+            border-bottom: 1px solid #282828; text-align: center; 
+        }
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 40px; margin-top: 15px; }
+        .rank { display: flex; flex-direction: column; align-items: center; position: relative; }
+        
+        .rank img { border-radius: 50%; object-fit: cover; border: 3px solid; background: #282828; }
+        .rank-1 img { width: 90px; height: 90px; border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        .rank-2 img { width: 70px; height: 70px; border-color: #c0c0c0; }
+        .rank-3 img { width: 70px; height: 70px; border-color: #cd7f32; }
+        
+        .crown { position: absolute; top: -20px; font-size: 24px; color: #ffd700; }
+        .badge { 
+            position: absolute; bottom: 40px; background: #282828; width: 24px; height: 24px; 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            font-size: 12px; font-weight: bold; border: 2px solid #121212; 
+        }
+        .rank-1 .badge { background: #ffd700; color: black; }
+        .rank-2 .badge { background: #c0c0c0; color: black; }
+        .rank-3 .badge { background: #cd7f32; color: white; }
+        
+        .rank-name { margin-top: 15px; font-weight: bold; font-size: 15px; }
+        .rank-pts { font-size: 13px; color: #1db954; font-weight: bold; }
+
+        /* === NỬA DƯỚI: BỨC TƯỜNG FAN (GIỮ NGUYÊN STYLE CỦA BẠN) === */
+        .chat-header { padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: bold; font-size: 16px; color: #1db954; border-bottom: 1px solid #282828; background: #0f0f0f;}
+        
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #0b0b0b; }
+        .chat-box::-webkit-scrollbar { width: 6px; }
+        .chat-box::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .chat-message { display: flex; flex-direction: column; align-items: flex-end; }
+        .chat-message.other { align-items: flex-start; }
+        .chat-message .time { font-size: 11px; color: #666; margin-bottom: 5px; }
+        .chat-message .text { background: #1db954; color: black; padding: 10px 15px; border-radius: 18px; border-top-right-radius: 4px; font-weight: 500; font-size: 14px; max-width: 70%; line-height: 1.4; }
+        .chat-message.other .text { background: #282828; color: white; border-top-right-radius: 18px; border-top-left-radius: 4px; }
+        
+        .chat-input { padding: 20px; border-top: 1px solid #282828; display: flex; gap: 10px; background: #121212; }
+        .chat-input input { flex: 1; background: #282828; border: none; padding: 15px 20px; border-radius: 30px; color: white; outline: none; font-size: 14px; }
+        .chat-input button { background: #1db954; color: black; border: none; padding: 0 25px; border-radius: 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: 0.2s;}
+        .chat-input button:hover { background: #1ed760; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- KHU VỰC TOP FANS -->
+    <div class="leaderboard">
+        <h2 style="margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 2px;"><i class="fas fa-trophy" style="color: #ffd700;"></i> Bảng Vàng Fan Cứng</h2>
+        <div class="podium">
+            <!-- Top 2 -->
+            <div class="rank rank-2">
+                <img src="https://i.pravatar.cc/150?img=32" alt="">
+                <div class="badge">2</div>
+                <div class="rank-name">Tiên</div>
+                <div class="rank-pts">9.8k điểm</div>
+            </div>
+            <!-- Top 1 -->
+            <div class="rank rank-1">
+                <i class="fas fa-crown crown"></i>
+                <img src="https://i.pravatar.cc/150?img=11" alt="">
+                <div class="badge">1</div>
+                <div class="rank-name">Hiếu</div>
+                <div class="rank-pts">12.5k điểm</div>
+            </div>
+            <!-- Top 3 -->
+            <div class="rank rank-3">
+                <img src="https://ui-avatars.com/api/?name=Pham+Huu+Thuc&background=random&color=fff" alt="">
+                <div class="badge">3</div>
+                <div class="rank-name">Phạm Hữu Thức</div>
+                <div class="rank-pts">8.2k điểm</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHU VỰC BỨC TƯỜNG FAN -->
+    <div class="chat-header">
+        <span><i class="fas fa-users"></i> Bức Tường Fan</span>
+        <a href="community.html" style="color: #888; text-decoration: none; font-size: 13px; font-weight: normal;"><i class="fas fa-times"></i> Đóng</a>
+    </div>
+    
+    <div class="chat-box" id="fan-wall">
+        <div style="text-align: center; color: gray; margin-top: 20px; font-size: 13px;">Đang tải tin nhắn từ cộng đồng...</div>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Viết bình luận của bạn..." onkeypress="handleEnter(event)">
+        <button onclick="sendComment()"><i class="fas fa-paper-plane"></i> Gửi</button>
+    </div>
+
+</div>
+
+<!-- SCRIPT GỌI API C# (Giữ nguyên logic của bạn) -->
+<script>
+    const API_URL = 'http://thucpham111-001-site1.stempurl.com/api/community/comments';
+    const myUsername = localStorage.getItem('username') || "Khách";
+
+    async function loadWallComments() {
+        try {
+            const res = await fetch(API_URL);
+            if (!res.ok) return;
+            const comments = await res.json();
+            
+            const chatBox = document.getElementById('fan-wall');
+            chatBox.innerHTML = ''; 
+
+            comments.reverse().forEach(c => {
+                const isMyMessage = c.username === myUsername;
+                
+                // Định dạng giờ đơn giản
+                const timeStr = new Date(c.createdAt || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                chatBox.innerHTML += `
+                    <div class="chat-message ${isMyMessage ? '' : 'other'}">
+                        <span class="time">${isMyMessage ? '' : c.username + ' • '}${timeStr}</span>
+                        <div class="text">${c.content}</div>
+                    </div>
+                `;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (e) {
+            console.log("Đợi Server...");
+        }
+    }
+
+    async function sendComment() {
+        const input = document.getElementById('chat-input');
+        const content = input.value.trim();
+        if (!content) return; 
+
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Username: myUsername, Content: content })
+            });
+            input.value = ''; 
+            loadWallComments(); 
+        } catch (e) {
+            alert("Lỗi kết nối Server C#!");
+        }
+    }
+
+    function handleEnter(e) { if (e.key === 'Enter') sendComment(); }
+    setInterval(loadWallComments, 2000);
+    loadWallComments();
+</script>
+
+</body>
+</html>

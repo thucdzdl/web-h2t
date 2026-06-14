@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Kiện Âm Nhạc - H2T Music</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            background: #0b0b0b; color: white; font-family: 'Segoe UI', sans-serif; 
+            margin: 0; padding: 0;
+            background-image: radial-gradient(circle at top left, #1a1a1a, #000);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        .header-nav { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
+        .header-nav a { color: #888; text-decoration: none; font-size: 20px; transition: 0.2s; }
+        .header-nav a:hover { color: white; }
+        .header-nav h1 { margin: 0; font-size: 28px; color: #1db954; }
+
+        /* === HERO BANNER: SỰ KIỆN NỔI BẬT === */
+        .hero-event {
+            position: relative; height: 350px; border-radius: 20px; overflow: hidden;
+            background: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.2)), 
+                        url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80') center/cover;
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid #282828;
+        }
+        
+        .hero-badge {
+            position: absolute; top: 30px; left: 40px; background: #fb233b; color: white;
+            padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 13px;
+            letter-spacing: 1px; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(251, 35, 59, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 35, 59, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 35, 59, 0); }
+        }
+
+        .hero-event h2 { margin: 0 0 10px 0; font-size: 42px; font-weight: 900; }
+        .hero-event p { margin: 0 0 25px 0; color: #ccc; font-size: 16px; }
+        
+        .btn-buy {
+            background: #1db954; color: black; border: none; padding: 15px 35px;
+            border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer;
+            transition: 0.2s; width: fit-content; display: flex; align-items: center; gap: 10px;
+        }
+        .btn-buy:hover { background: #1ed760; transform: scale(1.05); }
+
+        /* === DANH SÁCH SỰ KIỆN === */
+        .section-title { margin: 50px 0 20px 0; font-size: 22px; border-bottom: 1px solid #282828; padding-bottom: 15px; }
+        
+        .event-list { display: flex; flex-direction: column; gap: 20px; }
+        
+        .event-card {
+            background: #181818; border-radius: 15px; padding: 20px; display: flex;
+            align-items: center; gap: 25px; transition: 0.2s; border: 1px solid #282828;
+        }
+        .event-card:hover { background: #282828; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+        .date-box {
+            background: #121212; min-width: 80px; height: 80px; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 1px solid #333;
+        }
+        .date-box .month { color: #fb233b; font-size: 14px; font-weight: bold; text-transform: uppercase; }
+        .date-box .day { font-size: 28px; font-weight: 900; }
+
+        .event-info { flex: 1; }
+        .event-info h3 { margin: 0 0 8px 0; font-size: 20px; }
+        .event-info p { margin: 0; color: #888; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-ticket {
+            background: transparent; color: white; border: 1px solid #888; padding: 10px 25px;
+            border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-ticket:hover { border-color: white; }
+        
+        .sold-out { background: #121212; color: #555; border-color: #333; cursor: not-allowed; }
+        .sold-out:hover { border-color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav">
+        <a href="community.html"><i class="fas fa-arrow-left"></i></a>
+        <h1><i class="fas fa-ticket-alt"></i> Sự Kiện Âm Nhạc</h1>
+    </div>
+
+    <div class="hero-event">
+        <div class="hero-badge">SẮP DIỄN RA</div>
+        <h2>H2T Super Concert 2026</h2>
+        <p><i class="fas fa-map-marker-alt" style="color: #1db954;"></i> Sân vận động Quốc gia Mỹ Đình, Hà Nội • 19:00 - 15/08/2026</p>
+        <button class="btn-buy"><i class="fas fa-ticket-alt"></i> Mua vé ngay</button>
+    </div>
+
+    <h2 class="section-title">Lịch trình Tour & Sự kiện khác</h2>
+
+    <div class="event-list">
+        <div class="event-card">
+            <div class="date-box">
+                <span class="month">Thg 9</span>
+                <span class="day">02</span>
+            </div>
+            <div class="event-info">
+                <h3>Sơn Tùng M-TP "Sky Tour"</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Phố đi bộ Nguyễn Huệ, TP.HCM</p>
+            </div>
+            <button class="btn-ticket">Tìm vé</button>
+        </div>
+
+        <div class="event-card">
+            <div class="date-box">
+                <span class="month">Thg 10</span>
+                <span class="day">15</span>
+            </div>
+            <div class="event-info">
+                <h3>Lofi Chill Night - Code & Relax</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Không gian sáng tạo H2T Studio</p>
+            </div>
+            <button class="btn-ticket">Tìm vé</button>
+        </div>
+
+        <div class="event-card" style="opacity: 0.7;">
+            <div class="date-box">
+                <span class="month">Thg 11</span>
+                <span class="day">20</span>
+            </div>
+            <div class="event-info">
+                <h3>HIEUTHUHAI Fan Meeting</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Trung tâm hội nghị Quốc gia</p>
+            </div>
+            <button class="btn-ticket sold-out">Đã cháy vé</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
